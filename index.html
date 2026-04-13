@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">    
+    <title>Claire</title>
+    <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    
+<!-- HORNÍ MENU-->
+ <nav>
+    <a href="#omne">O mně</a>
+    <a href="#sluzby">Ceník</a>
+    <div class="dropdown">
+
+    <div class="dropdown">
+    <a href="#" onclick="toggleDropdown(event)">Služby</a>
+
+    <div class="dropdown-menu" id="dropdownMenu">
+        <a href="#relaxacni">Relaxační rituál</a>
+        <a href="#masaz">Masáž hlavy</a>
+        <a href="#hydratace">Hydratace vlasů</a>
+        <a href="#aroma">Aromaterapie</a>
+        <a href="#regenerace">Regenerace</a>
+    </div>
+</div>
+</div>
+    <a href="#kontakt">Kontakt</a>
+</nav>
+
+ <!-- HLAVNÍ STRÁNKA-->
+  <section class="HLAVNÍ_STRÁNKA">
+
+    <div class="VNITŘEK_HLAVNÍ_STRÁNKY">
+<div class="OTEVIRACI_DOBA">
+   <p>Po: 9:00–18:00</p>
+    <p>Út: 9:00–18:00</p>
+    <p>St: 9:00–18:00</p>
+    <p>Čt: 9:00–18:00</p>
+    <p>Pá: 9:00–18:00</p>
+    <p class="zavreno">So–Ne: zavřeno</p>
+</div>
+    <div class="LOGO_WRAP">
+    <img src="fotky/logo.png" class="LOGO_FIRMY">
+</div>
+
+    
+
+    <div class="KONTENT_HLAVNÍ_STRÁNKY">
+        <a href="https://matej-pecha.reservio.com" target="_blank" class="btn">
+    Rezervovat termín
+</a>
+    
+</button>
+    </div>
+
+</div>
+
+</section>
+
+  <!--O MNĚ-->
+  <section id="omne">
+
+    <div class="O_MNE_CELE">
+
+        <div class="O_MNE_RAMECEK">
+
+            <img src="fotky/Relaxed elegance in soft lighting.png" class="O_MNE_FOTKA">
+
+           <div class="O_MNE_INFO">
+
+           <h2>Claire</h2>
+           <p>Specialistka na head spa rituály</p>
+
+           <div class="O_MNE_VICE" id="O_MNE_VICE_JS">
+           <p>Věnuji se relaxačním rituálům...</p>
+           <p>Mým cílem je vytvořit prostor klidu.ssssssssssssssssss..</p>
+           
+        </div>
+
+         <button onclick="toggleAbout()" class="O_MNE_BTN">
+           Zobrazit více
+         </button>
+
+        </div>
+
+           </div>
+
+        </div>
+
+    </div>
+
+</section>
+  <!--SLUŽBY-->
+ <section id="sluzby">
+
+    <h2>Ceník</h2>
+
+    <div class="SLUŽBY_VŠECHNY">
+
+        <a href="#relaxacni" class="SLUŽBA_BOX">
+            <h3>Relaxační rituál</h3>
+            <p class="CENA_SLUŽBY">1200 Kč</p>
+            <p class="POPIS_SLUŽBY">Uvolnění a regenerace pokožky hlavy.</p>
+        </a>
+
+        <a href="#masaz" class="SLUŽBA_BOX">
+            <h3>Masáž hlavy</h3>
+            <p class="CENA_SLUŽBY">800 Kč</p>
+            <p class="POPIS_SLUŽBY">Podpora prokrvení a relaxace.</p>
+        </a>
+
+        <a href="#hydratace" class="SLUŽBA_BOX">
+            <h3>Hydratace vlasů</h3>
+            <p class="CENA_SLUŽBY">1000 Kč</p>
+            <p class="POPIS_SLUŽBY">Hloubková péče o vlasy.</p>
+        </a>
+
+        <a href="#aroma" class="SLUŽBA_BOX">
+            <h3>Aromaterapie</h3>
+            <p class="CENA_SLUŽBY">900 Kč</p>
+            <p class="POPIS_SLUŽBY">Uklidnění mysli pomocí vůní.</p>
+        </a>
+
+        <a href="#regenerace" class="SLUŽBA_BOX">
+            <h3>Regenerace</h3>
+            <p class="CENA_SLUŽBY">1100 Kč</p>
+            <p class="POPIS_SLUŽBY">Obnova vitality vlasů i pokožky.</p>
+        </a>
+
+    </div>
+
+</section>
+<section class="DETAIL_SLUZBY" id="relaxacni">
+
+    <div class="DETAIL_BOX">
+
+        <div class="DETAIL_TEXT">
+            <h2>Relaxační rituál</h2>
+            <p>
+                Hloubková relaxace pokožky hlavy, uvolnění napětí a regenerace.
+                Součástí je jemná masáž, aromaterapie a péče o vlasy.
+            </p>
+
+            <ul>
+                <li>60 minut relaxace</li>
+                <li>Masáž + péče o pokožku</li>
+                <li>Aromaterapie</li>
+            </ul>
+
+            <button class="btn" onclick="openReservio()">
+                Rezervovat
+            </button>
+
+            <a href="#sluzby" class="zpet">← Zpět na ceník</a>
+        </div>
+
+        <div class="DETAIL_IMAGE">
+            <img src="fotky/ig7.png">
+        </div>
+
+    </div>
+
+</section>
+
+<section class="DETAIL_SLUZBY" id="masaz">
+
+    <div class="DETAIL_BOX">
+
+        <div class="DETAIL_IMAGE">
+            <img src="fotky/ig5.png">
+        </div>
+
+        <div class="DETAIL_TEXT">
+            <h2>Masáž hlavy</h2>
+            <p>
+                Uvolňující masáž zaměřená na stimulaci pokožky hlavy,
+                podporu prokrvení a celkové uvolnění stresu.
+            </p>
+
+            <ul>
+                <li>30–45 minut</li>
+                <li>Podpora růstu vlasů</li>
+                <li>Okamžité uvolnění napětí</li>
+            </ul>
+
+            <button class="btn" onclick="openReservio()">
+                Rezervovat
+            </button>
+
+            <a href="#sluzby" class="zpet">← Zpět na ceník</a>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="DETAIL_SLUZBY" id="hydratace">
+
+    <div class="DETAIL_BOX">
+
+        <div class="DETAIL_TEXT">
+            <h2>Hydratace vlasů</h2>
+            <p>
+                Hloubková péče pro suché a poškozené vlasy.
+                Vlasy získají zpět lesk, hebkost a vitalitu.
+            </p>
+
+            <ul>
+                <li>Intenzivní výživa vlasů</li>
+                <li>Obnova struktury</li>
+                <li>Lesk a hebkost</li>
+            </ul>
+
+            <button class="btn" onclick="openReservio()">
+                Rezervovat
+            </button>
+
+            <a href="#sluzby" class="zpet">← Zpět na ceník</a>
+        </div>
+
+        <div class="DETAIL_IMAGE">
+            <img src="fotky/ig8.png">
+        </div>
+
+    </div>
+
+</section>
+
+<section class="DETAIL_SLUZBY" id="aroma">
+
+    <div class="DETAIL_BOX">
+
+        <div class="DETAIL_IMAGE">
+            <img src="fotky/ig9.png.jpg">
+        </div>
+
+        <div class="DETAIL_TEXT">
+            <h2>Aromaterapie</h2>
+            <p>
+                Relaxace pomocí přírodních esenciálních olejů,
+                které harmonizují mysl i tělo.
+            </p>
+
+            <ul>
+                <li>Výběr vůní na míru</li>
+                <li>Zklidnění mysli</li>
+                <li>Prohloubení relaxace</li>
+            </ul>
+
+            <button class="btn" onclick="openReservio()">
+                Rezervovat
+            </button>
+
+            <a href="#sluzby" class="zpet">← Zpět na ceník</a>
+        </div>
+
+    </div>
+
+</section>
+
+<section class="DETAIL_SLUZBY" id="regenerace">
+
+    <div class="DETAIL_BOX">
+
+        <div class="DETAIL_TEXT">
+            <h2>Regenerace</h2>
+            <p>
+                Komplexní péče zaměřená na obnovu vitality vlasů i pokožky.
+                Ideální po náročném období nebo stresu.
+            </p>
+
+            <ul>
+                <li>Obnova vlasů i pokožky</li>
+                <li>Hloubková regenerace</li>
+                <li>Dlouhodobý efekt</li>
+            </ul>
+
+            <button class="btn" onclick="openReservio()">
+                Rezervovat
+            </button>
+
+            <a href="#sluzby" class="zpet">← Zpět na ceník</a>
+        </div>
+
+        <div class="DETAIL_IMAGE">
+            <img src="fotky/ig10.png">
+        </div>
+
+    </div>
+
+</section>
+<!--INFORMACE-->
+<div id="reservioPopup" class="RESERVIO_POPUP">
+
+    <div class="RESERVIO_BOX">
+
+        <span class="closeBtn" onclick="closeReservio()">×</span>
+
+        <iframe 
+            src="https://matej-pecha.reservio.com"
+            frameborder="0">
+        </iframe>
+
+    </div>
+
+</div>
+
+<!--KONTAKT-->
+<section id="kontakt">
+
+    <!-- 🔥 IG SEKCE -->
+    <div class="IG_SECTION">
+
+        <div class="IG_BOX">
+
+            
+               <h2 class="IG_TITLE">
+                 Sleduj mě na 
+                
+                <a href="https://www.instagram.com/" target="_blank">Instagramu</a>
+            </h2>
+
+            <div class="IG">
+
+                <a href="https://www.instagram.com/p/DUapZm1Ar8i/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank">
+                    <img src="fotky/ig10.png">
+                </a>
+
+                <a href="https://www.instagram.com/p/DUinmpxAhUt/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank">
+                    <img src="fotky/ig5.png">
+                </a>
+
+                <a href="https://www.instagram.com/p/DV8w48PAqqt/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank">
+                    <img src="fotky/ig7.png">
+                </a>
+
+                <a href="https://www.instagram.com/p/DWlobAoAiCV/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank">
+                    <img src="fotky/ig8.png">
+                </a>
+
+                <a href="https://www.instagram.com/reel/DW1vfUmAuwf/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank">
+                    <img src="fotky/ig9.png.jpg">
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 🔥 KONTAKTY -->
+    <div class="KONTAKT_INFO">
+
+        <h2>Kontakt</h2>
+
+        <p>Telefon: +420 123 456 789</p>
+        <p>Email: info@claire.cz</p>
+        <p>Adresa: Prostějov</p>
+
+    </div>
+
+</section>
+<script src="script.js"></script>
+</body>
+</html>
