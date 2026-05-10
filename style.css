@@ -109,58 +109,11 @@ nav a:hover::after {
     padding: 120px 0;
 background: url("fotky/IMG_7427 (1).jpg") center/cover no-repeat;
     
-@media (max-width: 768px) {
 
-    .HLAVNÍ_STRÁNKA {
-        padding: 80px 0;
-    }
 
-    .VNITŘEK_HLAVNÍ_STRÁNKY {
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
 
-    .OTEVIRACI_DOBA {
-        position: static;
-        margin-top: 20px;
-        text-align: center;
-        font-size: 16px;
-    }
+    
 
-    .LOGO_WRAP {
-        position: static;
-        transform: none;
-    }
-
-    .LOGO_FIRMY {
-        position: static;
-        transform: none;
-        width: 120px;
-        margin-top: 20px;
-    }
-
-    .KONTENT_HLAVNÍ_STRÁNKY {
-        position: static;
-        margin-top: 20px;
-    }
-
-}
-@media (max-width: 768px) {
-
-    body {
-        overflow-x: hidden;
-    }
-
-    .VNITŘEK_HLAVNÍ_STRÁNKY {
-        width: 95%;
-        max-width: 100%;
-        margin: 0 auto;
-    }
-
-}
 }
 .OTEVIRACI_DOBA {
     color: #333;
@@ -288,6 +241,66 @@ opacity: 0.9;
     background: rgba(196, 170, 128, 0.9);
 }
 /*KONEC HLAVNÍ STRÁNKY*/
+/* =========================
+   DÁRKOVÝ POUKAZ
+========================= */
+
+.POUKAZ {
+    padding: 60px 20px;
+
+    position: relative;
+
+    background: url("fotky/IMG_7431.jpg") center/cover no-repeat;
+}
+
+.POUKAZ_BOX {
+    position: relative;
+    z-index: 2;
+
+    max-width: 900px;
+
+    margin: auto;
+
+    display: flex;
+    align-items: center;
+    gap: 40px;
+
+    padding: 30px;
+
+    border-radius: 30px;
+
+    background: rgba(235, 213, 180, 0.897);
+
+    
+
+    border: 1px solid #8f6838;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+.POUKAZ_TEXT h2 {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.POUKAZ_TEXT p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.POUKAZ_IMAGE img {
+    width: 100%;
+    max-width: 420px;
+
+    border-radius: 20px;
+
+    object-fit: cover;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
 
 /*ZAČÁTEK O MNĚ*/
 /* ===== O MNĚ ===== */
@@ -332,16 +345,7 @@ justify-content: flex-start;
 .O_MNE_FOTKA:hover {
     transform: scale(1.1);
 }
-@media (max-width: 768px) {
 
-    .O_MNE_FOTKA {
-        width: 100%;
-        max-width: 300px;
-        height: 300px;
-        object-fit: cover; /* 🔥 fix deformace */
-    }
-
-}
 /* text */
 .O_MNE_INFO {
     max-width: 500px;
@@ -457,11 +461,7 @@ text-align: left;
     font-size: 15px;
     line-height: 1.6;
 }
-@media (max-width: 768px) {
-    .INFO_GRID {
-        grid-template-columns: 1fr;
-    }
-}
+
 /*ZAČÁTEK CENÍKU*/
 #sluzby {
     padding: 100px 20px;
@@ -523,6 +523,7 @@ text-align: left;
     cursor: pointer;
     font-weight: 500;
     text-decoration: none;
+     border: 1.2px solid #8f6838;
 }
 
 .SLUŽBA_BOX:hover {
@@ -545,11 +546,9 @@ text-align: left;
 
 
 /* mobil */
-@media (max-width: 768px) {
-    .SLUŽBY_VŠECHNY {
-        grid-template-columns: 1fr;
-    }
-}
+
+    
+
 /*KOENC CENÍKU*/
 #relaxacni {
     background: url("fotky/IMG_7433.jpg") center/cover no-repeat;
@@ -648,14 +647,6 @@ text-align: left;
     text-decoration: none;
 }
 
-/* mobil */
-@media (max-width: 768px) {
-    .DETAIL_BOX {
-        flex-direction: column;
-        text-align: center;
-    }
-}
-
 /* 🔥 IG BACKGROUND SEKCE */
 .IG_SECTION {
     position: relative;
@@ -717,15 +708,15 @@ text-align: left;
 /* 🔥 KONTAKT POD TÍM */
 .KONTAKT_INFO {
     text-align: center;
-    margin-top: 60px;
-    font-size:17px ;
+    margin-top: -10px;
+    font-size:23px ;
 }
 .KONTAKT_INFO a {
     text-decoration: none; /* pryč podtržení */
     color: #000000; /* tvoje brand barva */
     font-weight: 500;
     transition: 0.3s;
-    font-size: 20px;
+    font-size: 23px;
 }
 
 .KONTAKT_INFO a:hover {
@@ -733,7 +724,7 @@ text-align: left;
 }
 .IG_TITLE {
     text-align: center;
-    font-size: 30px;
+    font-size: 35px;
     font-weight: 600;
     color: white;
     letter-spacing: 1px;
@@ -766,9 +757,7 @@ text-align: left;
     transition: 0.3s;
 }
 
-.fb-link:hover img {
-    transform: scale(1.1);
-}
+
 /* 🔥 hover NA CELÝ ELEMENT */
 .fb-link:hover {
     transform: scale(1.2);
@@ -801,11 +790,6 @@ text-align: left;
     transform: scale(1.1);
 }
 
-@media (max-width: 768px) {
-    .IG {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
 .RESERVIO_POPUP {
     position: fixed;
     inset: 0;
@@ -848,31 +832,101 @@ text-align: left;
 body {
     overflow-x: hidden;
 }
+/* =========================
+   INSTAGRAM FEED
+========================= */
 
-@media (max-width: 768px) {
-.HLAVNÍ_STRÁNKA {
-    padding: 90px 0 40px;
+.IG_FEED {
+    padding: 80px 20px;
+
+    background: rgba(235, 213, 180, 0.35);
+  background: url("fotky/ChatGPT Image 9. 5. 2026 21_34_43.png") center/cover no-repeat;
+    text-align: center;
 }
-    .VNITŘEK_HLAVNÍ_STRÁNKY {
+
+.IG_FEED_TITLE {
+    font-size: 34px;
+    margin-bottom: 40px;
+}
+.IG_FEED_TITLE a {
+    text-decoration: none;
+    color: #000000;
+
+    transition: 0.3s;
+}
+.IG_FEED_TITLE a:hover {
+    color: #664a25;
+}
+.IG_GRID {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 20px;
+
+    max-width: 750px;
+    margin: auto;
+}
+
+.IG_GRID img {
     width: 100%;
-    height: auto;
-    min-height: 80vh;
+    aspect-ratio: 4 / 5;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    object-fit: cover;
 
-    position: relative;
+    border-radius: 5px;
+ border: 1.5px solid #8f6838;
+    transition: 0.3s ease;
 }
+.IG_FEED_BOX {
+    max-width: 950px;
 
-    .OTEVIRACI_DOBA {
-        position: static;
-        text-align: center;
-        margin-top: 20px;
+    margin: auto;
+
+    padding: 40px;
+
+    border-radius: 30px;
+
+    background: rgba(221, 199, 164, 0);
+
+    backdrop-filter: blur(5px);
+
+    border: 1px solid #8f6838;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+.IG_GRID img:hover {
+    transform: scale(1.03);
+}
+@media (max-width: 768px) {
+
+    body {
+        overflow-x: hidden;
     }
 
-    .LOGO_FIRMY {
+    /* HERO */
+
+    .HLAVNÍ_STRÁNKA {
+        padding: 90px 0 40px;
+        overflow: hidden;
+    }
+
+    .VNITŘEK_HLAVNÍ_STRÁNKY {
+        width: 95%;
+        max-width: 100%;
+
+        min-height: 80vh;
+
+        margin: 0 auto;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        position: relative;
+    }
+
+    .LOGO_WRAP {
     position: relative;
 
     top: auto;
@@ -880,26 +934,94 @@ body {
 
     transform: none;
 
-    width: 120px;
+    margin-bottom: 0px;
 }
-.LOGO_WRAP::after {
-    width: 280px;
-    height: 280px;
 
-    filter: blur(50px);
-}
+    .LOGO_WRAP::after {
+        width: 280px;
+        height: 280px;
+
+        top: 50%;
+        left: 50%;
+
+        transform: translate(-50%, -50%);
+
+        filter: blur(50px);
+    }
+
+    .LOGO_FIRMY {
+        position: relative;
+
+        top: auto;
+        left: auto;
+
+        transform: none;
+
+        width: 120px;
+
+        margin-top: 20px;
+    }
+
     .KONTENT_HLAVNÍ_STRÁNKY {
+        position: relative;
+
+        bottom: auto;
+        left: auto;
+
+        transform: none;
+
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        margin-top: 180px;
+    }
+
+    .OTEVIRACI_DOBA {
     position: relative;
 
-    bottom: auto;
-    left: auto;
+    text-align: center;
 
-    transform: none;
+    font-size: 17px;
+    line-height: 1.5;
 
-    width: 100%;
+    margin-top: 0;
+    margin-bottom: 25px;
 
-    margin-top: 20px;
+    z-index: 2;
 }
+.OTEVIRACI_DOBA::before {
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 280px;
+    height: 90px;
+
+    background: linear-gradient(
+    90deg,
+    rgba(235, 213, 180, 0) 0%,
+    rgba(235, 213, 180, 0.89) 15%,
+    rgba(235, 213, 180, 0.877) 85%,
+    rgba(235, 213, 180, 0) 100%
+    );
+
+
+    z-index: -1;
+}
+    .btn {
+        padding: 12px 22px;
+        font-size: 15px;
+    }
+
+    /* ABOUT */
 
     .O_MNE_RAMECEK {
         flex-direction: column;
@@ -909,12 +1031,32 @@ body {
 
     .O_MNE_FOTKA {
         width: 100%;
-        max-width: 280px;
+        max-width: 300px;
+
+        height: 300px;
+        object-fit: cover;
     }
 
     .O_MNE_INFO {
         align-items: center;
+        margin-top: -40px;
     }
+
+    /* INFO */
+
+    .INFO_GRID {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    width: 100%;
+}
+.INFO_GRID {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    width: 100%;
+}
+    /* SLUŽBY */
 
     .SLUŽBY_VŠECHNY {
         grid-template-columns: 1fr;
@@ -925,6 +1067,8 @@ body {
         text-align: center;
     }
 
+    /* IG */
+
     .IG {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -933,43 +1077,89 @@ body {
         width: 100%;
     }
 
-    .RESERVIO_BOX {
-        height: 80vh;
-    }
-     nav {
+    /* NAV */
+
+    nav {
         gap: 10px;
-        flex-wrap: wrap; /* 🔥 DŮLEŽITÉ */
+        flex-wrap: wrap;
+
         padding: 10px 5px;
+        width: 100%;
+    
     }
 
     nav a {
         margin: 5px;
         font-size: 14px;
     }
-.dropdown-menu {
-    display: flex;
-    flex-direction: column; /* 🔥 pod sebe */
-    align-items: center;
-    gap: 10px;
+
+    .dropdown-menu {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* POPUP */
+
+    .RESERVIO_BOX {
+        height: 80vh;
+    }
+    .INFO_CARD:nth-child(3) {
+    grid-column: span 1;
 }
-.LOGO_WRAP {
-    position: relative;
+.IG_GRID {
+    grid-template-columns: repeat(2, 1fr);
 
-    top: auto;
-    left: auto;
+    gap: 20px;
+}
+.IG_GRID img {
+    width: 100%;
 
+    max-width: 130px;
+
+    margin: auto;
+
+    display: block;
+}
+.KONTAKT_INFO p {
+    font-size: 17px;
+}
+.fb-link img,
+.ig-link img {
+    width: 20px;
+    height: 20px;
+}
+.fb-link,
+.ig-link {
+    font-size: 19px !important;
+}
+.POUKAZ_BOX {
+        flex-direction: column;
+
+        text-align: center;
+
+        gap: 30px;
+
+        padding: 25px;
+    }
+
+    .POUKAZ_TEXT h2 {
+        font-size: 34px;
+    }
+
+    .POUKAZ_TEXT p {
+        font-size: 15px;
+    }
+    .O_MNE_FOTKA:hover,
+.IG_GRID img:hover,
+.LOGO_FIRMY:hover,
+.SLUŽBA_BOX:hover,
+.btn:hover,
+.fb-link:hover,
+.ig-link:hover {
     transform: none;
-
-    margin-bottom: 40px;
-}
-.OTEVIRACI_DOBA {
-    margin-top: 0;
-    margin-bottom: 15px;
-
-    font-size: 16px;
-}
-.btn {
-    padding: 12px 22px;
-    font-size: 15px;
+    box-shadow: none;
+    filter: none;
 }
 }
