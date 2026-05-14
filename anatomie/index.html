@@ -1,0 +1,7825 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anatomie Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .menu {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .start-btn {
+      background: #007bff;
+      color: white;
+    }
+
+    .answer-btn {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      text-align: left;
+      background: #eee;
+    }
+
+    .answer-btn.correct {
+      background: #4caf50;
+      color: white;
+    }
+
+    .answer-btn.wrong {
+      background: #f44336;
+      color: white;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .question-box {
+      margin-top: 20px;
+    }
+
+    .result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .progress {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    @media (max-width: 700px) {
+
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  h2 {
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  .menu {
+    flex-direction: column;
+  }
+
+  .start-btn,
+  .answer-btn {
+
+    width: 100%;
+    font-size: 18px;
+
+    padding: 14px;
+  }
+
+  .answer-btn {
+    text-align: left;
+  }
+
+  #progress {
+    font-size: 18px;
+  }
+
+  #result {
+    font-size: 22px;
+    line-height: 1.5;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Anatomie Quiz</h1>
+
+    <div class="menu">
+     <button class="start-btn" onclick="startQuiz('all')">
+  Test – všechny otázky
+</button>
+
+<button class="start-btn" onclick="startQuiz('wrong')">
+  Test – špatné otázky
+</button>
+
+<button class="start-btn" onclick="startQuiz('40')">
+  Test – 40 otázek
+</button>
+
+<button class="start-btn" onclick="startQuiz('40wrong')">
+  Test – špatné z 40
+</button>
+
+
+    </div>
+
+    <div id="quiz" class="hidden">
+        <button class="start-btn" onclick="finishQuizEarly()">
+  Ukončit test
+</button>
+      <div class="progress" id="progress"></div>
+      <div class="question-box">
+        <h2 id="question"></h2>
+        <div id="answers"></div>
+      </div>
+      <div class="result" id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // OTÁZKY
+    // =========================
+    // Správná odpověď = index (0=A, 1=B, 2=C)
+
+    const questions = [
+
+{
+question: "Z biochemického pohledu jsou organismy založeny na sloučeninách",
+answers: ["dusíku","křemíku","uhlíku"],
+correct: 2
+},
+{
+question: "Základní stavební a funkční jednotkou organismu je",
+answers: ["aminokyselina","orgán","buňka"],
+correct: 2
+},
+{
+question: "Nová somatická buňka vzniká",
+answers: ["dělením buňky mateřské","splynutím dvou buněk mateřských","nekrózou buňky staré"],
+correct: 0
+},
+{
+question: "Buňka získává svou funkci v organismu během",
+answers: ["dělení","diferenciace","nekrózy"],
+correct: 1
+},
+{
+question: "Buňka působí na své okolí pomocí sekrece",
+answers: ["autokrinní","endokrinní","parakrinní"],
+correct: 2
+},
+{
+question: "Řízená buněčná smrt se nazývá",
+answers: ["nekróza","mitóza","apoptóza"],
+correct: 2
+},
+{
+question: "Buněčné jádro",
+answers: ["je přítomno ve všech buňkách","chybí např. v erytrocytech","vytváří ATP"],
+correct: 1
+},
+{
+question: "Buněčné jádro obsahuje",
+answers: ["chromozomy","biochemické dráhy syntézy ATP","smyslové receptory"],
+correct: 0
+},
+{
+question: "V buněčném jádru lidské buňky",
+answers: ["se DNA replikuje pouze výjimečně","je 24 chromozomů","je obsažena genetická informace pro celý organismus"],
+correct: 2
+},
+{
+question: "Genetická informace ve formě DNA se v buňce nachází",
+answers: ["v jádru","v jádru a jadérku","v jádru a mitochondrii"],
+correct: 2
+},
+{
+question: "Chromatin je uložen",
+answers: ["v jádru","v mitochondriích","v ribozomech"],
+correct: 0
+},
+{
+question: "Cytoplazmatická membrána",
+answers: ["umožňuje komunikaci buňky s okolím","umožňuje pouze pasivní transport","je u živočichů obklopena buněčnou stěnou"],
+correct: 0
+},
+{
+question: "Nedílnou součástí cytoplazmatické membrány jsou",
+answers: ["receptorové proteiny a cholesterol","hormony a enzymy","glykogen, glukóza a celulóza"],
+correct: 0
+},
+{
+question: "Základ buněčné membrány tvoří",
+answers: ["aminokyselinové řetězce","glykogen","fosfolipidová dvojvrstva"],
+correct: 2
+},
+{
+question: "Vlastnosti buněčné membrány umožňují",
+answers: ["volný průchod velkých molekul","různé složení tekutiny vně a uvnitř ohraničeného prostoru","přenos látek pouze do buňky"],
+correct: 1
+},
+{
+question: "Klidové membránové napětí",
+answers: ["nachází se pouze v buňkách myokardu","nachází se na membránách všech buněk těla","je výsledkem pasivního pohybu iontů přes buněčnou membránu"],
+correct: 2
+},
+{
+question: "Buňka reaguje na různé signály prostřednictvím",
+answers: ["buněčných receptorů","vylučování kyslíku","změn v cytoskeletu"],
+correct: 0
+},
+{
+question: "Buněčné receptory",
+answers: ["umožňují buňce reagovat na různé signály","mají transportní funkci","ovlivňují difúzi a osmózu"],
+correct: 0
+},
+{
+question: "Mitochondrie je organela, kde dominantně probíhá",
+answers: ["anaerobní metabolismus","aerobní metabolismus","spotřeba CO2"],
+correct: 1
+},
+{
+question: "Mitochondrie je organela, kde probíhá produkce",
+answers: ["ATP","glykogenu","kyslíku"],
+correct: 0
+},
+{
+question: "Oxidační reakce spojené s tvorbou ATP probíhají",
+answers: ["v jádru","v cytoplazmě","v mitochondrii"],
+correct: 2
+},
+{
+question: "Oxidativní fosforylace probíhá",
+answers: ["v endoplazmatickém retikulu","v mitochondriích","v ribozomech"],
+correct: 1
+},
+{
+question: "Cytoskelet se nepodílí",
+answers: ["na sekreci","na změně tvaru buněk","na fagocytóze"],
+correct: 0
+},
+{
+question: "Množství vody v organismu",
+answers: ["klesá s věkem","s věkem se nemění","představuje asi 30 % tělesné hmotnosti"],
+correct: 0
+},
+{
+question: "Nitrobuněčná tekutina",
+answers: ["je krev","je tkáňový mok","je součástí cytoplazmy"],
+correct: 2
+},
+{
+question: "Nitrobuněčná tekutina",
+answers: ["hlavním kationtem je chlór","hlavním kationtem jsou uhličitany","hlavním kationem je draslík"],
+correct: 2
+},
+{
+question: "Draslík",
+answers: ["je hlavní intracelulární iont","je hlavní extracelulární iont","není vázán na metabolismus sodíku"],
+correct: 0
+},
+{
+question: "Sodík",
+answers: ["je hlavní kationt extracelulárního prostoru","je hlavní intracelulární kationt","se zvyšuje působením parathormonu"],
+correct: 0
+},
+{
+question: "Při difúzi přechází látka",
+answers: ["směrem koncentračního spádu","proti koncentračnímu spádu","na místo jejího výhodnějšího uplatnění"],
+correct: 0
+},
+{
+question: "Difúze",
+answers: ["je energeticky náročný proces","znamená pohyb látky z nižší do vyšší koncentrace","nevyžaduje energii"],
+correct: 2
+},
+{
+question: "Při osmóze přestupuje tekutina přes membránu směrem",
+answers: ["nižší koncentrace iontů","vyšší koncentrace iontů","proti gravitaci"],
+correct: 1
+},
+{
+question: "Osmóza",
+answers: ["znamená pohyb vody z nižší do vyšší koncentrace iontů","je energeticky náročný proces","má okrajový význam"],
+correct: 0
+},
+{
+question: "Při vzestupu osmolarity extracelulární tekutiny",
+answers: ["voda vstupuje do buňky","objeví se pocit žízně","klesá sekrece ADH"],
+correct: 1
+},
+{
+question: "Onkotický tlak",
+answers: ["má významnou roli při výměně tekutiny mezi kapilárou a mezibuněčným prostorem","znamená část osmotického tlaku připadající na lipoproteiny","má omezený význam"],
+correct: 0
+},
+{
+question: "Který roztok nevyvolá změnu osmolarity tělesných tekutin?",
+answers: ["hypotonický","izotonický","hypertonický"],
+correct: 1
+},
+{
+question: "Roztok s vyšším obsahem iontů je",
+answers: ["hypertonický","izotonický","hypotonický"],
+correct: 0
+},
+{
+question: "Hypotonický roztok má",
+answers: ["vyšší obsah iontů","stejný obsah iontů","nižší obsah iontů"],
+correct: 2
+},
+{
+question: "Aktivní transport na buněčné membráně",
+answers: ["nevyžaduje ATP","probíhá proti koncentračnímu spádu","transportuje především vodu"],
+correct: 1
+},
+{
+question: "Tkáň je",
+answers: ["soubor buněk, které společně vznikají a zanikají","pojmem nadřazeným pojmu orgán","společenství buněk stejného typu a funkce"],
+correct: 2
+},
+{
+question: "Epitel",
+answers: ["je neschopný regenerace","kryje povrchy a vystýlá dutiny","je tkáň tvořená vlákny"],
+correct: 1
+},
+{
+question: "Typ tkáně typický pro žlázy",
+answers: ["žlázový epitel","pojivo","resorpční epitel"],
+correct: 0
+},
+{
+question: "Mezi pojivové tkáně nepatří",
+answers: ["vazivo","chrupavka","hladká svalovina"],
+correct: 2
+},
+{
+question: "Kolagenní vlákna jsou typická",
+answers: ["pevností","pružností","vysokým podílem hořčíku"],
+correct: 0
+},
+{
+question: "Elastická vlákna charakterizuje",
+answers: ["pevnost","pružnost","neohebnost"],
+correct: 1
+},
+{
+question: "Tuková tkáň je tvořena",
+answers: ["leukocyty","osteocyty","adipocyty"],
+correct: 2
+},
+{
+question: "Hnědá tuková tkáň",
+answers: ["se vyskytuje pouze u novorozenců","nevyskytuje se","kryje vnitřní orgány"],
+correct: 0
+},
+{
+question: "Vazivovou chrupavku najdeme",
+answers: ["uvnitř svalových vláken","v kloubních spojeních","v ušním boltci"],
+correct: 1
+},
+{
+question: "Růst kosti do délky",
+answers: ["ukončují pohlavní hormony","je stimulován testosteronem","je stimulován adrenalinem"],
+correct: 0
+},
+{
+question: "Osteocyty vznikají přeměnou",
+answers: ["osteoblastů","osteoklastů","tkáňových mikrofágů"],
+correct: 0
+},
+{
+question: "Osteocyty",
+answers: ["nemají fyziologickou funkci","vylučují látky stimulující PTH","vytvářejí síť registrující zatížení kostí"],
+correct: 2
+},
+{
+question: "Osteoklasty",
+answers: ["podílejí se na výstavbě kostní tkáně","odbourávají organickou i anorganickou kostní hmotu","jejich činnost stimuluje kalcitonin"],
+correct: 1
+},
+{
+question: "Kostní tkáň tvoří",
+answers: ["aktin a myosin","kostní dřeň a erytropoetin","substantia compacta a spongiosa"],
+correct: 2
+},
+{
+question: "Nedílnou složkou anorganické kostní hmoty jsou",
+answers: ["vápník a fosfor","vápník a hořčík","vápník a křemík"],
+correct: 0
+},
+{
+question: "Maximální množství kostní hmoty má člověk přibližně ve věku",
+answers: ["25 let","35 let","15 let"],
+correct: 0
+},
+{
+question: "Remodelace kostí primárně slouží",
+answers: ["k udržování hladiny Ca a P","k regulaci PTH a kalcitoninu","k přizpůsobení kosti měnícím se podmínkám"],
+correct: 2
+},
+{
+question: "Metabolismus kostní tkáně je zásadně ovlivněn",
+answers: ["mechanickým zatěžováním kostí","glykémií","inzulinem"],
+correct: 0
+},
+{
+question: "Estrogenní hormony",
+answers: ["omezují tvorbu kostní hmoty","podporují tvorbu kostní hmoty","nemají vliv"],
+correct: 1
+},
+{
+question: "Osteoporóza u žen souvisí",
+answers: ["s menopauzou","s vysokým obsahem tuku","s mechanickým zatěžováním"],
+correct: 0
+},
+{
+question: "Osteoporóza",
+answers: ["může nastat při nedostatku estrogenů","souvisí s nadbytkem estrogenů","vzniká při mechanickém namáhání"],
+correct: 0
+},
+{
+question: "Pro svalové buňky je typická schopnost",
+answers: ["pracovat bez únavy","kontrakce","aktivně protahovat délku"],
+correct: 1
+},
+{
+question: "Primární funkcí svalové buňky je",
+answers: ["tvorba tepla","pohyb","syntéza ATP"],
+correct: 1
+},
+{
+question: "Klidová metabolická aktivita svalové tkáně je",
+answers: ["nižší než tuková","stejná jako tuková","vyšší než tuková"],
+correct: 2
+},
+{
+question: "Pro buňky příčně pruhované svaloviny je typické",
+answers: ["jsou vícejaderné","jsou vřetenovité","jsou bez mitochondrií"],
+correct: 0
+},
+{
+question: "Pro kosterní sval je charakteristické",
+answers: ["aktivně prodlužuje délku","ke stahu potřebuje nervový podnět","vzruch přechází svalovým vřeténkem"],
+correct: 1
+},
+{
+question: "Kontrakce kosterního svalu je vyvolána",
+answers: ["akčním potenciálem z CNS","sympatikem","ionty vápníku"],
+correct: 0
+},
+{
+question: "Impuls pro volní pohyb vzniká",
+answers: ["v motorickém kortexu CNS","v alfa-motoneuronu","v míše"],
+correct: 0
+},
+{
+question: "Kosterní sval",
+answers: ["je řízen autonomním NS","nepotřebuje nervový podnět","je schopen tetanického stahu"],
+correct: 2
+},
+{
+question: "Svalové vlákno reaguje na podráždění",
+answers: ["kontrakcí","relaxací","třesem"],
+correct: 0
+},
+{
+question: "Základní kontraktilní jednotka svalového vlákna",
+answers: ["myoglobin","sarkoplazma","sarkomera"],
+correct: 2
+},
+{
+question: "Základní kontraktilní jednotkou kosterního svalu je",
+answers: ["sarkomera","sarkoplazma","aktomyosin"],
+correct: 0
+},
+{
+question: "Vedlejším produktem svalové kontrakce je",
+answers: ["práce","teplo","křeč"],
+correct: 1
+},
+{
+question: "Sarkoplazmatické retikulum obsahuje",
+answers: ["ionty vápníku","ionty hořčíku","ionty sodíku"],
+correct: 0
+},
+{
+question: "Sarkoplazmatické retikulum je zásobárnou pro",
+answers: ["železo","vápník","hořčík"],
+correct: 1
+},
+{
+question: "Místem přenosu AP mezi nervem a svalem je",
+answers: ["SA uzel","pyramidová dráha","nervosvalová ploténka"],
+correct: 2
+},
+{
+question: "Mediátorem mezi nervem a svalem je",
+answers: ["adrenalin","noradrenalin","acetylcholin"],
+correct: 2
+},
+{
+question: "Ionty vápníku",
+answers: ["nejsou nezbytné","uvolňují vazebné místo na aktinu","způsobují pokles pH"],
+correct: 1
+},
+{
+question: "Mezi kontraktilní bílkoviny řadíme",
+answers: ["aktin a myosin","troponin a tropomyosin","titin"],
+correct: 0
+},
+{
+question: "Podkladem svalové kontrakce je",
+answers: ["spojení aktinu a myosinu","spojení troponinu","spojení titinu"],
+correct: 0
+},
+{
+question: "Pro správný průběh svalové kontrakce jsou důležité ionty",
+answers: ["jódu","selenu a zinku","hořčíku a vápníku"],
+correct: 2
+},
+{
+question: "Myoglobin",
+answers: ["má obdobnou funkci jako hemoglobin","obsahuje měď","je hlavně v glykolytických vláknech"],
+correct: 0
+},
+{
+question: "Svalová relaxace je",
+answers: ["aktivní děj vyžadující ATP","pasivní děj","řízena parasympatikem"],
+correct: 0
+},
+{
+question: "Rozdíl mezi bílými a červenými vlákny spočívá",
+answers: ["v barvě","v intenzitě činnosti","v získávání energie"],
+correct: 2
+},
+{
+question: "Červená svalová vlákna svou barvu získávají díky",
+answers: ["hemoglobinu","myoglobinu","kapilárám"],
+correct: 1
+},
+{
+question: "Nejvyšší oxidativní kapacitu mají",
+answers: ["červená vlákna","bílá vlákna","přechodná vlákna"],
+correct: 0
+},
+{
+question: "Největší sklon k hypertrofii mají",
+answers: ["červená vlákna","bílá vlákna","přechodná vlákna"],
+correct: 1
+},
+{
+question: "Nejvíce jsou kapilarizována",
+answers: ["červená vlákna","bílá vlákna","přechodná vlákna"],
+correct: 0
+},
+{
+question: "Množství mitochondrií je největší",
+answers: ["v erytrocytech","v bílých vláknech","v červených vláknech"],
+correct: 2
+},
+{
+question: "Motorická jednotka je",
+answers: ["soubor všech svalových vláken","soubor motoneuronů","soubor vláken inervovaných jedním motoneuronem"],
+correct: 2
+},
+{
+question: "Motorická jednotka je",
+answers: ["komplex vřetének a neuronů","komplex reflexů","komplex periferního motoneuronu a vláken"],
+correct: 2
+},
+{
+question: "Postupný nábor motorických jednotek umožňuje",
+answers: ["prostorovou sumaci","časovou sumaci","zapojení jen červených vláken"],
+correct: 0
+},
+{
+question: "Hladký tetanus vzniká díky",
+answers: ["prostorové sumaci","časové sumaci AP","střídání kontrakce a relaxace"],
+correct: 1
+},
+{
+question: "Během isotonické kontrakce",
+answers: ["nemění se napětí, mění se délka","nemění se délka, mění se napětí","nemění se nic"],
+correct: 0
+},
+{
+question: "Během isometrické kontrakce",
+answers: ["nemění se napětí","nemění se délka","mění se oboje"],
+correct: 1
+},
+{
+question: "Satelitní buňky jsou",
+answers: ["aktivovatelné při poškození svalu","vazivové buňky","výživné buňky NS"],
+correct: 0
+},
+{
+question: "Při svalové hypertrofii dochází",
+answers: ["ke zmnožení vláken","k nárůstu aktinu a myosinu","k poklesu svalové hmoty"],
+correct: 1
+},
+{
+question: "Svalová atrofie je",
+answers: ["nárůst svalové hmoty","nárůst počtu vláken","pokles svalové hmoty"],
+correct: 2
+},
+{
+question: "Sarkopenie je",
+answers: ["úbytek svalové hmoty stárnutím","ztráta svalů neaktivitou","prasknutí buňky"],
+correct: 0
+},
+{
+question: "Pro buňky hladké svaloviny je typické",
+answers: ["jsou vícejaderné","jsou vřetenovité","neobsahují myofibrily"],
+correct: 1
+},
+{
+question: "Pohyby hladkého svalstva jsou řízeny",
+answers: ["alfa-motoneurony","vůlí","autonomním nervovým systémem"],
+correct: 2
+},
+{
+question: "Kontrakce hladkého svalu je",
+answers: ["vůlí neovlivnitelná","vůlí ovlivnitelná","řízena alfa-motoneurony"],
+correct: 0
+},
+{
+question: "Podnět pro kontrakci hladkého svalu",
+answers: ["jen z ANS","jen z gama motoneuronů","může být i humorální"],
+correct: 2
+},
+{
+question: "Pro plíce platí",
+answers: ["jsou pokryty pleurou parietalis","obě mají 2 laloky","pravá má 3 a levá 2 laloky"],
+correct: 2
+},
+{
+question: "Základní funkční jednotkou plic je",
+answers: ["pleura","alveolus","bránice"],
+correct: 1
+},
+{
+question: "Vedlejší nosní dutiny se nacházejí",
+answers: [
+"pouze v čelní kosti a horní čelisti",
+"pouze v čichové kosti a dolní čelisti",
+"v čelní, klínové, čichové kosti a horní čelisti"
+],
+correct: 2
+},
+{
+question: "Největší chrupavkou hrtanu je",
+answers: [
+"chrupavka příklopková",
+"chrupavka hlasivková",
+"chrupavka štítná"
+],
+correct: 2
+},
+{
+question: "Hlasivkové vazy jsou uloženy",
+answers: [
+"v nosohltanu",
+"v hrtanu",
+"v průdušnici"
+],
+correct: 1
+},
+{
+question: "Pokračováním hrtanu je",
+answers: [
+"jícen",
+"průduška",
+"průdušnice"
+],
+correct: 2
+},
+{
+question: "Průdušinky jsou zakončeny",
+answers: [
+"krevními kapilárami",
+"průduškami",
+"alveoly"
+],
+correct: 2
+},
+{
+question: "Řasinkový epitel je typický pro",
+answers: [
+"dýchací cesty",
+"trávicí soustavu",
+"močový měchýř"
+],
+correct: 0
+},
+{
+question: "Pravá plíce má",
+answers: [
+"2 laloky",
+"4 laloky",
+"3 laloky"
+],
+correct: 2
+},
+{
+question: "Pohrudnice je",
+answers: [
+"blána na plicích",
+"blána na hrudníku",
+"blána na srdci"
+],
+correct: 1
+},
+{
+question: "Vnitřní dýchání",
+answers: [
+"je výměna plynů mezi krví a plícemi",
+"probíhá v krvi",
+"je výměna O2 a CO2 mezi krví a tkáněmi"
+],
+correct: 2
+},
+{
+question: "Bránice je",
+answers: [
+"příklopka v trávicí trubici",
+"sval podílející se na dýchání",
+"součást lymfatického systému"
+],
+correct: 1
+},
+{
+question: "Mezi výdechové svaly patří",
+answers: [
+"zevní mezižeberní svaly",
+"vnitřní mezižeberní svaly",
+"bránice"
+],
+correct: 1
+},
+{
+question: "Nádech",
+answers: [
+"závisí na činnosti dýchacích svalů",
+"závisí na parciálním tlaku kyslíku",
+"závisí na srdeční frekvenci"
+],
+correct: 0
+},
+{
+question: "Výdech",
+answers: [
+"je v klidu aktivní děj",
+"je v klidu pasivní děj",
+"je během zátěže pasivní děj"
+],
+correct: 1
+},
+{
+question: "Vzduch proudí",
+answers: [
+"z vyššího tlaku do nižšího",
+"z nižšího do vyššího",
+"podle atmosférického tlaku"
+],
+correct: 0
+},
+{
+question: "Dýchací svaly",
+answers: [
+"patří k hladké svalovině",
+"patří k příčně pruhované svalovině",
+"jsou specifickým typem svaloviny"
+],
+correct: 1
+},
+{
+question: "Činnost dýchacích svalů",
+answers: [
+"nelze ovlivnit vůlí",
+"je řízena autonomním NS",
+"vede ke změnám objemu hrudní dutiny"
+],
+correct: 2
+},
+{
+question: "Dýchací centrum je umístěno",
+answers: [
+"v mozkové kůře",
+"v prodloužené míše",
+"v hypotalamu"
+],
+correct: 1
+},
+{
+question: "Receptory registrující CO2 jsou",
+answers: [
+"v plicích",
+"v dýchacím centru",
+"v erytrocytech"
+],
+correct: 1
+},
+{
+question: "Receptory registrující O2 jsou",
+answers: [
+"v dýchacím centru",
+"v plicích",
+"v aortálních a karotických tělíscích"
+],
+correct: 2
+},
+{
+question: "Centrální receptory reagují",
+answers: [
+"na zvýšení CO2 zvýšením ventilace",
+"na snížení O2",
+"na zvýšení pH"
+],
+correct: 0
+},
+{
+question: "Dýchání",
+answers: [
+"je zcela nezávislé na vůli",
+"lze částečně ovlivnit vůlí",
+"lze plně ovlivnit vůlí"
+],
+correct: 1
+},
+{
+question: "Nejdůležitější složkou atmosféry pro člověka je",
+answers: [
+"dusík",
+"kyslík",
+"voda"
+],
+correct: 1
+},
+{
+question: "Největší složku atmosféry tvoří",
+answers: [
+"dusík",
+"kyslík",
+"voda"
+],
+correct: 0
+},
+{
+question: "Výměna O2 a CO2 v plicích",
+answers: [
+"probíhá pomocí nosičů",
+"probíhá prostou difúzí",
+"probíhá usnadněnou difúzí"
+],
+correct: 1
+},
+{
+question: "Difúze kyslíku",
+answers: [
+"probíhá po koncentračním spádu",
+"proti koncentračnímu spádu",
+"bez ohledu na gradient"
+],
+correct: 0
+},
+{
+question: "Difúze CO2",
+answers: [
+"probíhá po koncentračním spádu",
+"proti koncentračnímu spádu",
+"bez ohledu na gradient"
+],
+correct: 0
+},
+{
+question: "Parciální tlak kyslíku je",
+answers: [
+"vyšší ve vysokých horách",
+"nejvyšší na hladině moře",
+"konstantní"
+],
+correct: 1
+},
+{
+question: "Ve vyšších nadmořských výškách",
+answers: [
+"parciální tlak kyslíku klesá",
+"zůstává stejný",
+"stoupá CO2"
+],
+correct: 0
+},
+{
+question: "Celková kapacita plic zahrnuje",
+answers: [
+"dechový objem + IRV + ERV",
+"vitální kapacitu a reziduální objem",
+"IRV + ERV"
+],
+correct: 1
+},
+{
+question: "Vitální kapacitu tvoří",
+answers: [
+"IRV + ERV",
+"DO × DF",
+"dechový objem + IRV + ERV"
+],
+correct: 2
+},
+{
+question: "Vitální kapacita je",
+answers: [
+"minimální množství vzduchu",
+"součet max objemu a RV",
+"objem vydechnutý po max nádechu"
+],
+correct: 2
+},
+{
+question: "Vzduch nadechnutý po klidném nádechu",
+answers: [
+"inspirační rezervní objem",
+"exspirační rezervní objem",
+"reziduální objem"
+],
+correct: 0
+},
+{
+question: "Vzduch vydechnutý po klidném výdechu",
+answers: [
+"inspirační rezervní objem",
+"exspirační rezervní objem",
+"reziduální objem"
+],
+correct: 1
+},
+{
+question: "Vzduch, který nelze vydechnout",
+answers: [
+"vitální kapacita",
+"reziduální objem",
+"výdechová kapacita"
+],
+correct: 1
+},
+{
+question: "Reziduální objem je množství vzduchu",
+answers: [
+"po klidném výdechu",
+"po klidném nádechu",
+"po maximálním výdechu"
+],
+correct: 2
+},
+{
+question: "Klidový dechový objem činí",
+answers: [
+"0,5 l",
+"1,5 l",
+"0,5 l/min"
+],
+correct: 0
+},
+{
+question: "Dechový objem při zatížení",
+answers: [
+"lze zvýšit jen IRV",
+"lze zvýšit IRV i ERV",
+"lze využít RV"
+],
+correct: 1
+},
+{
+question: "Průměrná dechová frekvence je",
+answers: [
+"6–8/min",
+"12–16/min",
+"16–20/min"
+],
+correct: 1
+},
+{
+question: "Ventilace znamená",
+answers: [
+"výměnu plynů",
+"udržování mrtvého prostoru",
+"výměnu vzduchu mezi plícemi a atmosférou"
+],
+correct: 2
+},
+{
+question: "Minutová ventilace je",
+answers: [
+"součet DO a DF",
+"součin DO a DF",
+"využití VC"
+],
+correct: 1
+},
+{
+question: "Klidová ventilace činí",
+answers: [
+"6–8 l/min",
+"200 l/min",
+"15–20 l/min"
+],
+correct: 0
+},
+{
+question: "Maximální ventilace může dosáhnout",
+answers: [
+"50 l/min",
+"100 l/min",
+"200 l/min"
+],
+correct: 2
+},
+{
+question: "Během ventilace",
+answers: [
+"veškerý vzduch jde do alveolů",
+"část vzduchu zůstává v mrtvém prostoru",
+"kolísá atmosférický tlak"
+],
+correct: 1
+},
+{
+question: "Mrtvý prostor",
+answers: [
+"slouží po smrti",
+"je objem neúčastnící se výměny plynů",
+"odpovídá RV"
+],
+correct: 1
+},
+{
+question: "Velikost anatomického mrtvého prostoru",
+answers: [
+"mění se při nádechu",
+"mění se tlakem",
+"je asi 200 ml"
+],
+correct: 2
+},
+{
+question: "Fyziologický mrtvý prostor",
+answers: [
+"je ovlivněn ventilací a perfuzí",
+"je určen anatomickým mrtvým prostorem",
+"odpovídá RV"
+],
+correct: 0
+},
+{
+question: "Kardiovaskulární systém je",
+answers: [
+"uzavřený",
+"polouzavřený",
+"otevřený"
+],
+correct: 0
+},
+{
+question: "Dráždivost myokardu znamená",
+answers: [
+"reakci na naplnění",
+"schopnost odpovědět kontrakcí",
+"schopnost tvořit vzruchy"
+],
+correct: 1
+},
+{
+question: "Osrdečník je",
+answers: [
+"svalová vrstva",
+"vak, ve kterém je srdce",
+"vnitřní vrstva srdce"
+],
+correct: 1
+},
+{
+question: "Srdeční svalovina se nazývá",
+answers: [
+"epikard",
+"myokard",
+"endokard"
+],
+correct: 1
+}, 
+{
+question: "Pravá síň a pravá komora jsou odděleny",
+answers: [
+"dvojcípou chlopní",
+"trojcípou chlopní",
+"aortální chlopní"
+],
+correct: 1
+},
+{
+question: "Mezi levou a pravou komorou se nachází",
+answers: [
+"síňová přepážka",
+"mezikomorová přepážka",
+"mitrální chlopeň"
+],
+correct: 1
+},
+{
+question: "Srdeční chlopně",
+answers: [
+"pracují mechanicky na základě tlakových změn",
+"jsou ovládány nervově",
+"se otevírají aktivní kontrakcí"
+],
+correct: 0
+},
+{
+question: "Funkcí srdečních chlopní je",
+answers: [
+"bránit zpětnému toku krve",
+"tvořit elektrické impulzy",
+"okysličovat krev"
+],
+correct: 0
+},
+{
+question: "Otevírání a zavírání chlopní",
+answers: [
+"je nervově řízený děj",
+"je mechanický děj závislý na tlaku",
+"je závislé na hormonu adrenalinu"
+],
+correct: 1
+},
+{
+question: "Pravou síň a pravou komoru odděluje",
+answers: [
+"trojcípá chlopeň",
+"dvojcípá chlopeň",
+"plicní chlopeň"
+],
+correct: 0
+},
+{
+question: "Levou síň a levou komoru odděluje",
+answers: [
+"trojcípá chlopeň",
+"dvojcípá chlopeň",
+"plicní chlopeň"
+],
+correct: 1
+},
+{
+question: "Atrioventrikulární chlopně jsou mezi",
+answers: [
+"síněmi a komorami",
+"komorami a tepnami",
+"síněmi a žilami"
+],
+correct: 0
+},
+{
+question: "Malý krevní oběh začíná",
+answers: [
+"v plicích",
+"srdcem",
+"v aortě"
+],
+correct: 1
+},
+{
+question: "Do pravé síně přitéká",
+answers: [
+"okysličená krev",
+"odkysličená krev z tělního oběhu",
+"krev z plic"
+],
+correct: 1
+},
+{
+question: "Do pravé síně ústí",
+answers: [
+"aorta",
+"plicní žíly",
+"horní a dolní dutá žíla"
+],
+correct: 2
+},
+{
+question: "Plicní oběh začíná",
+answers: [
+"z pravé komory",
+"z levé komory",
+"z pravé síně"
+],
+correct: 0
+},
+{
+question: "Plicní žíly vedou krev",
+answers: [
+"do pravé síně",
+"do levé síně",
+"do pravé komory"
+],
+correct: 1
+},
+{
+question: "Okysličená krev z plic proudí",
+answers: [
+"do levé síně",
+"do pravé síně",
+"do pravé komory"
+],
+correct: 0
+},
+{
+question: "Plicní žíly ústí",
+answers: [
+"do pravé síně",
+"do levé síně",
+"do levé komory"
+],
+correct: 1
+},
+{
+question: "Krev z plic se vrací",
+answers: [
+"plicními žilami do levé síně",
+"aortou do levé komory",
+"dutými žilami do pravé síně"
+],
+correct: 0
+},
+{
+question: "Do levé síně ústí",
+answers: [
+"čtyři plicní žíly",
+"dvě duté žíly",
+"aorta"
+],
+correct: 0
+},
+{
+question: "Levá síň obsahuje",
+answers: [
+"odkysličenou krev",
+"okysličenou krev z plic",
+"lymfu"
+],
+correct: 1
+},
+{
+question: "Nejvyšší tlak krve je",
+answers: [
+"v pravé komoře",
+"v levé komoře",
+"v pravé síni"
+],
+correct: 1
+},
+{
+question: "Levá komora vypuzuje krev",
+answers: [
+"do malého oběhu",
+"do velkého oběhu",
+"do plic"
+],
+correct: 1
+},
+{
+question: "Aorta vede krev",
+answers: [
+"do plic",
+"do velkého oběhu",
+"do pravé síně"
+],
+correct: 1
+},
+{
+question: "Převodní systém srdeční",
+answers: [
+"vede krev",
+"vede elektrické impulzy",
+"vede lymfu"
+],
+correct: 1
+},
+{
+question: "Automacie srdce znamená",
+answers: [
+"že impulzy vznikají v SA uzlu",
+"že srdce potřebuje nervový podnět",
+"že srdce pracuje jen při stresu"
+],
+correct: 0
+},
+{
+question: "Myokard ke kontrakci",
+answers: [
+"potřebuje vždy nervový podnět",
+"nepotřebuje nervový podnět",
+"potřebuje parasympatikus"
+],
+correct: 1
+},
+{
+question: "Impulzy v srdci",
+answers: [
+"vznikají automaticky",
+"vznikají jen při podráždění",
+"vznikají v mozku"
+],
+correct: 0
+},
+{
+question: "Převodní systém srdeční je",
+answers: [
+"tvořen cévami",
+"tvořen buňkami schopnými šířit vzruch",
+"částí autonomního NS"
+],
+correct: 1
+},
+{
+question: "Pacemakerové buňky jsou",
+answers: [
+"svalové buňky",
+"specializované buňky myokardu",
+"gliové buňky"
+],
+correct: 1
+},
+{
+question: "Primární pacemaker srdce je",
+answers: [
+"AV uzel",
+"SA uzel",
+"Hisův svazek"
+],
+correct: 1
+},
+{
+question: "Sinusový rytmus vzniká v",
+answers: [
+"SA uzlu",
+"AV uzlu",
+"komorách"
+],
+correct: 0
+},
+{
+question: "Normální klidová SF je",
+answers: [
+"20–40/min",
+"60–80/min",
+"100–140/min"
+],
+correct: 1
+},
+{
+question: "AV uzel má vlastní frekvenci asi",
+answers: [
+"10/min",
+"40/min",
+"120/min"
+],
+correct: 1
+},
+{
+question: "Srdeční automacie vzniká",
+answers: [
+"v mozku",
+"v srdci",
+"v míše"
+],
+correct: 1
+},
+{
+question: "Srdeční cyklus je",
+answers: [
+"jedna systola",
+"jedna diastola",
+"jeden cyklus systoly a diastoly"
+],
+correct: 2
+},
+{
+question: "Během diastoly",
+answers: [
+"se srdce plní krví",
+"se krev vypuzuje",
+"jsou otevřené semilunární chlopně"
+],
+correct: 0
+},
+{
+question: "Během systoly",
+answers: [
+"se srdce plní krví",
+"se krev vypuzuje do oběhu",
+"se zastaví proudění krve"
+],
+correct: 1
+},
+{
+question: "Při systole komor",
+answers: [
+"je krev vypuzena do tepen",
+"se plní síně",
+"je otevřena mitrální chlopeň"
+],
+correct: 0
+},
+{
+question: "Systola komor znamená",
+answers: [
+"naplnění komor",
+"vypuzení krve do oběhu",
+"relaxaci komor"
+],
+correct: 1
+},
+{
+question: "Kontrakce myokardu",
+answers: [
+"probíhá dle zákona vše nebo nic",
+"je odstupňovaná podle síly",
+"není závislá na AP"
+],
+correct: 0
+},
+{
+question: "Refrakterní fáze je",
+answers: [
+"fáze maximální kontrakce",
+"moment, kdy je sval nedráždivý",
+"fáze diastoly"
+],
+correct: 1
+},
+{
+question: "Buňky myokardu jsou spojeny",
+answers: [
+"myelinem",
+"interkalárními disky",
+"synapsemi"
+],
+correct: 1
+},
+{
+question: "Interkalární disky",
+answers: [
+"spojují buňky myokardu",
+"vedou krev",
+"jsou v kosterním svalu"
+],
+correct: 0
+},
+{
+question: "Nervová zakončení v srdci",
+answers: [
+"přenášejí vzruch na myokard",
+"okysličují myokard",
+"tvoří erytrocyty"
+],
+correct: 0
+},
+{
+question: "Srdeční frekvence se udává",
+answers: [
+"v litrech za minutu",
+"v mmHg",
+"počtem tepů za minutu"
+],
+correct: 2
+},
+{
+question: "Klidová SF dospělého je asi",
+answers: [
+"30/min",
+"70/min",
+"150/min"
+],
+correct: 1
+},
+{
+question: "Bradykardie znamená",
+answers: [
+"SF nad 100/min",
+"SF pod 50/min",
+"nepravidelný rytmus"
+],
+correct: 1
+},
+{
+question: "Tachykardie znamená",
+answers: [
+"zpomalení SF",
+"zrychlení SF nad fyziologickou mez",
+"zástavu srdce"
+],
+correct: 1
+},
+{
+question: "Minutový srdeční výdej je",
+answers: [
+"množství krve vypuzené za minutu",
+"množství krve v komoře",
+"objem plazmy"
+],
+correct: 0
+},
+{
+question: "Minutový srdeční výdej je",
+answers: [
+"SF × tepový objem",
+"TK × SF",
+"DF × DO"
+],
+correct: 0
+},
+{
+question: "Klidový minutový srdeční výdej je asi",
+answers: [
+"1 l/min",
+"5 l/min",
+"20 l/min"
+],
+correct: 1
+},
+{
+question: "Normální krevní tlak je asi",
+answers: [
+"80/40",
+"120/80",
+"200/120"
+],
+correct: 1
+},
+{
+question: "Krevní tlak v cévách",
+answers: [
+"stoupá směrem ke kapilárám",
+"je všude stejný",
+"postupně klesá"
+],
+correct: 2
+},
+{
+question: "EKG zaznamenává",
+answers: [
+"mechanickou práci srdce",
+"elektrickou činnost srdce",
+"krevní tlak"
+],
+correct: 1
+},
+{
+question: "Kardiovaskulární centrum je",
+answers: [
+"v hypotalamu",
+"v prodloužené míše",
+"v mozkové kůře"
+],
+correct: 1
+},
+{
+question: "Parasympatikus",
+answers: [
+"zpomaluje činnost srdce",
+"zrychluje činnost srdce",
+"nemá vliv na srdce"
+],
+correct: 0
+},
+{
+question: "Parasympatikus snižuje TK",
+answers: [
+"zrychlením SF",
+"zpomalením srdeční činnosti",
+"zvýšením kontraktility"
+],
+correct: 1
+},
+{
+question: "Sympatikus",
+answers: [
+"zpomaluje činnost srdce",
+"urychluje činnost srdce",
+"nemění SF"
+],
+correct: 1
+},
+{
+question: "Sympatikus vede",
+answers: [
+"ke zpomalení SF",
+"ke zrychlení SF",
+"k zastavení srdce"
+],
+correct: 1
+},
+{
+question: "Tepny",
+answers: [
+"vedou jen okysličenou krev",
+"vedou krev od srdce",
+"vedou krev k srdci"
+],
+correct: 1
+},
+{
+question: "Tepny mají",
+answers: [
+"velmi pevné a pružné stěny",
+"tenké stěny bez svaloviny",
+"chlopně"
+],
+correct: 0
+},
+{
+question: "Stěna tepen obsahuje",
+answers: [
+"hladkou svalovinu",
+"příčně pruhovanou svalovinu",
+"jen vazivo"
+],
+correct: 0
+},
+{
+question: "Aorta vystupuje",
+answers: [
+"z pravé komory",
+"z levé komory",
+"z levé síně"
+],
+correct: 1
+},
+{
+question: "Tělní oběh začíná",
+answers: [
+"z levé komory",
+"z pravé komory",
+"z pravé síně"
+],
+correct: 0
+},
+{
+question: "Okysličená krev v žilách je",
+answers: [
+"v dutých žilách",
+"v plicních žilách",
+"v portální žíle"
+],
+correct: 1
+},
+{
+question: "Žíly vedou krev",
+answers: [
+"od srdce",
+"směrem k srdci",
+"jen do plic"
+],
+correct: 1
+},
+{
+question: "Nejvíce krve je",
+answers: [
+"v tepnách",
+"v žilách",
+"v kapilárách"
+],
+correct: 1
+},
+{
+question: "Výměna látek probíhá hlavně",
+answers: [
+"v kapilárách",
+"v aortě",
+"v žilách"
+],
+correct: 0
+},
+{
+question: "Vazokonstrikce znamená",
+answers: [
+"rozšíření cév",
+"zúžení cév",
+"zastavení průtoku"
+],
+correct: 1
+},
+{
+question: "Vazokonstrikce je",
+answers: [
+"rozšíření cévy",
+"zúžení cévy",
+"prasknutí cévy"
+],
+correct: 1
+},
+{
+question: "Vazodilatace znamená",
+answers: [
+"rozšíření cévy",
+"zúžení cévy",
+"ucpání cévy"
+],
+correct: 0
+},
+{
+question: "Objem krve u dospělého činí asi",
+answers: [
+"2 litry",
+"5–6 litrů",
+"10 litrů"
+],
+correct: 1
+},
+{
+question: "Krevní rezervoáry jsou hlavně",
+answers: [
+"v mozku",
+"v játrech a slezině",
+"v kostech"
+],
+correct: 1
+},
+{
+question: "Hematokrit je asi",
+answers: [
+"47 %",
+"20 %",
+"80 %"
+],
+correct: 0
+},
+{
+question: "Viskozita krve je oproti vodě",
+answers: [
+"nižší",
+"stejná",
+"vyšší"
+],
+correct: 2
+},
+{
+question: "Fyziologické pH krve je",
+answers: [
+"6,0–6,5",
+"7,35–7,45",
+"8,5–9,0"
+],
+correct: 1
+},
+{
+question: "Krev je",
+answers: [
+"kyselá",
+"neutrální",
+"mírně zásaditá"
+],
+correct: 2
+},
+{
+question: "Pokles pH vede",
+answers: [
+"k alkalóze",
+"k acidóze",
+"k hypoxii"
+],
+correct: 1
+},
+{
+question: "Hlavním extracelulárním kationtem je",
+answers: [
+"draslík",
+"sodík",
+"vápník"
+],
+correct: 1
+},
+{
+question: "Hematokrit je",
+answers: [
+"objem plazmy",
+"poměr krevních tělísek k plazmě",
+"množství hemoglobinu"
+],
+correct: 1
+},
+{
+question: "Nejpočetnější krevní elementy jsou",
+answers: [
+"leukocyty",
+"erytrocyty",
+"trombocyty"
+],
+correct: 1
+},
+{
+question: "Normální glykémie nalačno je",
+answers: [
+"3,3–5,5 mmol/l",
+"8–10 mmol/l",
+"12–15 mmol/l"
+],
+correct: 0
+},
+{
+question: "Erytrocyty vznikají",
+answers: [
+"ve slezině",
+"v červené kostní dřeni",
+"v játrech"
+],
+correct: 1
+},
+{
+question: "Hemoglobin obsahuje",
+answers: [
+"železo",
+"měď",
+"vápník"
+],
+correct: 0
+},
+{
+question: "Pro tvorbu erytrocytů je důležitý vitamin",
+answers: [
+"A",
+"B12",
+"C"
+],
+correct: 1
+},
+{
+question: "Tvorbu erytrocytů podporuje",
+answers: [
+"kyselina listová",
+"vitamin D",
+"inzulin"
+],
+correct: 0
+},
+{
+question: "Erytropoetin se zvyšuje při",
+answers: [
+"hyperglykémii",
+"hypoxii",
+"alkalóze"
+],
+correct: 1
+},
+{
+question: "Životnost erytrocytu je asi",
+answers: [
+"7 dnů",
+"30 dnů",
+"100–120 dnů"
+],
+correct: 2
+},
+{
+question: "Červená kostní dřeň je",
+answers: [
+"v kostní dřeni",
+"ve slezině",
+"v brzlíku"
+],
+correct: 0
+},
+{
+question: "Trombocyty",
+answers: [
+"vznikají v kostní dřeni a slezině",
+"slouží k přenosu kyslíku",
+"jsou typ leukocytů"
+],
+correct: 0
+},
+{
+question: "Počet erytrocytů je asi",
+answers: [
+"4–5 milionů",
+"500 tisíc",
+"100 milionů"
+],
+correct: 0
+},
+{
+question: "Hemoglobin je v",
+answers: [
+"erytrocytech",
+"trombocytech",
+"lymfocytech"
+],
+correct: 0
+},
+{
+question: "Vazba kyslíku na Hb je",
+answers: [
+"nevratná",
+"reverzibilní",
+"toxická"
+],
+correct: 1
+},
+{
+question: "Kyslík se v krvi přenáší",
+answers: [
+"rozpuštěný v plazmě",
+"pomocí hemoglobinu",
+"v trombocytech"
+],
+correct: 1
+},
+{
+question: "Jedna molekula Hb váže",
+answers: [
+"2 molekuly O2",
+"4 molekuly O2",
+"8 molekul O2"
+],
+correct: 1
+},
+{
+question: "Hemoglobin může vázat",
+answers: [
+"4 molekuly kyslíku",
+"1 molekulu kyslíku",
+"10 molekul kyslíku"
+],
+correct: 0
+},
+{
+question: "Disociační křivka Hb",
+answers: [
+"ukazuje využití Hb pro O2",
+"ukazuje tvorbu ATP",
+"měří krevní tlak"
+],
+correct: 0
+},
+{
+question: "CO2 se převážně přenáší",
+answers: [
+"ve formě bikarbonátu",
+"na trombocytech",
+"jen rozpuštěný"
+],
+correct: 0
+},
+{
+question: "CO2 se přenáší",
+answers: [
+"jen rozpuštěný",
+"jen na Hb",
+"rozpuštěný, jako bikarbonát a na Hb"
+],
+correct: 2
+},
+{
+question: "CO2 se na Hb",
+answers: [
+"váže na jiné místo než O2",
+"váže na stejné místo",
+"neváže"
+],
+correct: 0
+},
+{
+question: "Hb vázající CO2 je",
+answers: [
+"oxyhemoglobin",
+"karbaminohemoglobin",
+"karboxyhemoglobin"
+],
+correct: 1
+},
+{
+question: "Hb vázající CO je",
+answers: [
+"karboxyhemoglobin",
+"oxyhemoglobin",
+"karbaminohemoglobin"
+],
+correct: 0
+},
+{
+question: "Oxid uhelnatý",
+answers: [
+"se váže hůře než O2",
+"se váže lépe než O2",
+"neváže se na Hb"
+],
+correct: 1
+},
+{
+question: "Hemostáza znamená",
+answers: [
+"zastavování krvácení",
+"tvorbu erytrocytů",
+"rozpad trombů"
+],
+correct: 0
+},
+{
+question: "Počet trombocytů je asi",
+answers: [
+"20–50 tisíc",
+"200–300 tisíc",
+"1 milion"
+],
+correct: 1
+},
+{
+question: "Krevní srážení se účastní",
+answers: [
+"jen trombocyty",
+"trombocyty, erytrocyty i některé leukocyty",
+"jen leukocyty"
+],
+correct: 1
+},
+{
+question: "Pro srážení krve je důležitý",
+answers: [
+"vápník",
+"draslík",
+"sodík"
+],
+correct: 0
+},
+{
+question: "Při srážení vzniká",
+answers: [
+"fibrin",
+"myoglobin",
+"inzulin"
+],
+correct: 0
+},
+{
+question: "Srážení krve",
+answers: [
+"vyžaduje vazodilataci",
+"probíhá při poškození cévy",
+"je řízeno parasympatikem"
+],
+correct: 1
+},
+{
+question: "Leukocyty",
+answers: [
+"patří k imunitnímu systému",
+"přenášejí kyslík",
+"tvoří Hb"
+],
+correct: 0
+},
+{
+question: "Počet leukocytů je asi",
+answers: [
+"4–10 tisíc",
+"100 tisíc",
+"1 milion"
+],
+correct: 0
+},
+{
+question: "Nejvíce leukocytů tvoří",
+answers: [
+"lymfocyty",
+"neutrofily",
+"eozinofily"
+],
+correct: 1
+},
+{
+question: "Leukocyty jsou",
+answers: [
+"bílé krvinky",
+"červené krvinky",
+"krevní destičky"
+],
+correct: 0
+},
+{
+question: "Leukocyty",
+answers: [
+"patří k imunitnímu systému",
+"tvoří hemoglobin",
+"zajišťují srážení"
+],
+correct: 0
+},
+{
+question: "Granulocyty barvíme",
+answers: [
+"kyselými barvivy",
+"zásaditými barvivy",
+"oběma typy barviv"
+],
+correct: 2
+},
+{
+question: "B-lymfocyty se podílejí",
+answers: [
+"na produkci imunoglobulinů",
+"na tvorbě Hb",
+"na vedení vzruchů"
+],
+correct: 0
+},
+{
+question: "Po infekci počet leukocytů",
+answers: [
+"klesá",
+"stoupá",
+"nemění se"
+],
+correct: 1
+},
+{
+question: "Imunoglobuliny jsou",
+answers: [
+"tuky",
+"protilátky bílkovinného charakteru",
+"hormony"
+],
+correct: 1
+},
+{
+question: "Nespecifická imunita",
+answers: [
+"je vrozená",
+"vzniká očkováním",
+"je získaná"
+],
+correct: 0
+},
+{
+question: "Antigen",
+answers: [
+"vyvolává imunitní odpověď",
+"ničí leukocyty",
+"je hormon"
+],
+correct: 0
+},
+{
+question: "Specifická imunita",
+answers: [
+"je charakteristická pamětí",
+"je vrozená",
+"je řízena jen sympatikem"
+],
+correct: 0
+},
+{
+question: "Očkování",
+answers: [
+"využívá aktivní imunizaci",
+"je pasivní imunizace",
+"ničí lymfocyty"
+],
+correct: 0
+},
+{
+question: "Imunita je",
+answers: [
+"řízena nervově",
+"řízena hormonálně",
+"komplexní obranný systém"
+],
+correct: 2
+},
+{
+question: "Humorální imunitu zajišťují",
+answers: [
+"B-lymfocyty",
+"T-lymfocyty",
+"erytrocyty"
+],
+correct: 0
+},
+{
+question: "Buněčnou imunitu zajišťují",
+answers: [
+"B-lymfocyty",
+"T-lymfocyty",
+"trombocyty"
+],
+correct: 1
+},
+{
+question: "Protilátky jsou",
+answers: [
+"bílkoviny",
+"lipidy",
+"sacharidy"
+],
+correct: 0
+},
+{
+question: "Imunita je",
+answers: [
+"schopnost tvořit ATP",
+"schopnost zneškodňovat cizorodé látky",
+"schopnost vést vzruch"
+],
+correct: 1
+},
+{
+question: "Tkáňový mok vzniká",
+answers: [
+"z krve",
+"v kostní dřeni",
+"v lymfatických uzlinách"
+],
+correct: 0
+},
+{
+question: "Tkáňový mok",
+answers: [
+"se většinou vrací do krve",
+"se celý mění v lymfu",
+"mizí potem"
+],
+correct: 0
+},
+{
+question: "Lymfa vzniká",
+answers: [
+"z tkáňového moku",
+"z erytrocytů",
+"v játrech"
+],
+correct: 0
+},
+{
+question: "Lymfa ústí do",
+answers: [
+"aorty",
+"ductus thoracicus",
+"plicní tepny"
+],
+correct: 1
+},
+{
+question: "Brzlík",
+answers: [
+"během dospívání zaniká",
+"roste celý život",
+"je součást ledvin"
+],
+correct: 0
+},
+{
+question: "Slezina",
+answers: [
+"je místem zániku erytrocytů",
+"tvoří inzulin",
+"vede moč"
+],
+correct: 0
+},
+{
+question: "Trávicí trubice obsahuje",
+answers: [
+"příčně pruhovanou svalovinu s volní kontrolou",
+"hladkou i příčně pruhovanou svalovinu",
+"jen hladkou svalovinu"
+],
+correct: 1
+},
+{
+question: "Největší část trávení probíhá v",
+answers: [
+"žaludku",
+"tenkém střevě",
+"tlustém střevě"
+],
+correct: 1
+},
+{
+question: "Parasympatikus",
+answers: [
+"tlumí trávení",
+"podporuje trávení",
+"nemá vliv"
+],
+correct: 1
+},
+{
+question: "Dospělý člověk má",
+answers: [
+"20 zubů",
+"32 zubů",
+"40 zubů"
+],
+correct: 1
+},
+{
+question: "Zub se skládá",
+answers: [
+"jen z korunky",
+"jen z kořene",
+"z korunky, krčku a kořene"
+],
+correct: 2
+},
+{
+question: "Trypsin",
+answers: [
+"štěpí tuky a bílkoviny",
+"štěpí sacharidy",
+"je hormon"
+],
+correct: 0
+},
+{
+question: "Pepsin štěpí",
+answers: [
+"bílkoviny",
+"tuky",
+"sacharidy"
+],
+correct: 0
+},
+{
+question: "Amyláza ve slinách",
+answers: [
+"štěpí polysacharidy",
+"štěpí tuky",
+"štěpí bílkoviny"
+],
+correct: 0
+},
+{
+question: "Amyláza tráví",
+answers: [
+"sacharidy",
+"bílkoviny",
+"tuky"
+],
+correct: 0
+},
+{
+question: "Polykání využívá svalovinu",
+answers: [
+"jen hladkou",
+"hladkou i příčně pruhovanou",
+"jen příčně pruhovanou"
+],
+correct: 1
+},
+{
+question: "Žaludeční šťáva obsahuje",
+answers: [
+"pepsin a HCl",
+"inzulin a glukagon",
+"žluč"
+],
+correct: 0
+},
+{
+question: "Neaktivní forma pepsinu je",
+answers: [
+"peptid",
+"pepsinogen",
+"trypsinogen"
+],
+correct: 1
+},
+{
+question: "Pepsin působí",
+answers: [
+"v tenkém střevě",
+"v žaludku",
+"v dutině ústní"
+],
+correct: 1
+},
+{
+question: "pH žaludku je",
+answers: [
+"silně kyselé",
+"zásadité",
+"neutrální"
+],
+correct: 0
+},
+{
+question: "Žaludeční sliznice je chráněna",
+answers: [
+"mucinem",
+"inzulinem",
+"bilirubinem"
+],
+correct: 0
+},
+{
+question: "HCl v žaludku",
+answers: [
+"má baktericidní účinek",
+"neutralizuje pepsin",
+"štěpí tuky"
+],
+correct: 0
+},
+{
+question: "Vnitřní faktor žaludku je důležitý",
+answers: [
+"pro vstřebávání vitaminu B12",
+"pro vstřebávání Ca",
+"pro tvorbu Hb"
+],
+correct: 0
+},
+{
+question: "Žaludeční kyselina",
+answers: [
+"je ochrannou bariérou",
+"ničí erytrocyty",
+"tvoří žluč"
+],
+correct: 0
+},
+{
+question: "HCl podporuje",
+answers: [
+"aktivaci pepsinogenu",
+"tvorbu inzulinu",
+"vstřebávání tuků"
+],
+correct: 0
+},
+{
+question: "Bílkoviny se tráví v žaludku",
+answers: [
+"pepsinem",
+"amylázou",
+"lipázou"
+],
+correct: 0
+},
+{
+question: "Enterocyt je",
+answers: [
+"buňka tenkého střeva",
+"krvinka",
+"neuron"
+],
+correct: 0
+},
+{
+question: "Do dvanáctníku ústí",
+answers: [
+"jen žlučovod",
+"jen pankreatický vývod",
+"žlučový i pankreatický vývod"
+],
+correct: 2
+},
+{
+question: "Na dvanáctník navazuje",
+answers: [
+"lačník",
+"kyčelník",
+"tlusté střevo"
+],
+correct: 0
+},
+{
+question: "Enterocyty se vyznačují",
+answers: [
+"nitrobuněčným trávením",
+"tvorbou erytrocytů",
+"vedením vzruchů"
+],
+correct: 0
+},
+{
+question: "Lipáza štěpí",
+answers: [
+"bílkoviny",
+"tuky",
+"sacharidy"
+],
+correct: 1
+},
+{
+question: "Vstřebané tuky odcházejí hlavně",
+answers: [
+"do krve",
+"do lymfy",
+"do žaludku"
+],
+correct: 1
+},
+{
+question: "Pankreatická šťáva obsahuje enzymy štěpící",
+answers: [
+"jen sacharidy",
+"jen tuky",
+"sacharidy, tuky i bílkoviny"
+],
+correct: 2
+},
+{
+question: "Trypsin se nachází",
+answers: [
+"ve slinách",
+"v pankreatické šťávě",
+"v žaludku"
+],
+correct: 1
+},
+{
+question: "Amyláza pankreatu je",
+answers: [
+"v pankreatické šťávě",
+"v žluči",
+"v žaludku"
+],
+correct: 0
+},
+{
+question: "Pepsin tráví",
+answers: [
+"tuky",
+"sacharidy",
+"bílkoviny"
+],
+correct: 2
+},
+{
+question: "Obsah tenkého střeva je",
+answers: [
+"kyselý",
+"zásaditý",
+"neutrální"
+],
+correct: 1
+},
+{
+question: "Pepsin štěpí",
+answers: [
+"bílkoviny",
+"lipidy",
+"sacharidy"
+],
+correct: 0
+},
+{
+question: "Lipáza štěpí",
+answers: [
+"tuky",
+"sacharidy",
+"aminokyseliny"
+],
+correct: 0
+},
+{
+question: "Žluč zajišťuje",
+answers: [
+"emulgaci tuků",
+"štěpení bílkovin",
+"tvorbu ATP"
+],
+correct: 0
+},
+{
+question: "Amyláza ve střevě",
+answers: [
+"štěpí sacharidy",
+"štěpí tuky",
+"štěpí bílkoviny"
+],
+correct: 0
+},
+{
+question: "Amyláza štěpí",
+answers: [
+"složité sacharidy na jednodušší",
+"tuky na MK",
+"bílkoviny na AK"
+],
+correct: 0
+},
+{
+question: "Většina vstřebávání živin probíhá v",
+answers: [
+"žaludku",
+"tenkém střevě",
+"tlustém střevě"
+],
+correct: 1
+},
+{
+question: "Poslední část tenkého střeva je",
+answers: [
+"lačník",
+"kyčelník",
+"slepé střevo"
+],
+correct: 1
+},
+{
+question: "Esovitá klička je část",
+answers: [
+"tenkého střeva",
+"žaludku",
+"tlustého střeva"
+],
+correct: 2
+},
+{
+question: "Tlusté střevo zajišťuje hlavně",
+answers: [
+"vstřebávání vody a elektrolytů",
+"trávení bílkovin",
+"tvorbu inzulinu"
+],
+correct: 0
+},
+{
+question: "Střevní bakterie tvoří",
+answers: [
+"B12 a K",
+"A a D",
+"E a C"
+],
+correct: 0
+},
+{
+question: "Játra leží",
+answers: [
+"vpravo pod bránicí",
+"vlevo pod srdcem",
+"v pánvi"
+],
+correct: 0
+},
+{
+question: "Játra jsou",
+answers: [
+"největší žláza těla",
+"největší sval",
+"největší kost"
+],
+correct: 0
+},
+{
+question: "Ledviny",
+answers: [
+"tvoří žluč",
+"jsou hlavní vylučovací orgán",
+"tvoří erytrocyty"
+],
+correct: 1
+},
+{
+question: "Portální žíla je",
+answers: [
+"jaterní žíla",
+"vrátnicová žíla",
+"plicní tepna"
+],
+correct: 1
+},
+{
+question: "Žlučník leží",
+answers: [
+"na dolní straně jater",
+"v žaludku",
+"u sleziny"
+],
+correct: 0
+},
+{
+question: "Žluč vzniká",
+answers: [
+"v pankreatu",
+"v játrech",
+"ve slezině"
+],
+correct: 1
+},
+{
+question: "Žluč je důležitá pro",
+answers: [
+"emulgaci tuků",
+"trávení bílkovin",
+"tvorbu Hb"
+],
+correct: 0
+},
+{
+question: "Portální žíla odvádí krev",
+answers: [
+"z mozku",
+"z nepárových orgánů dutiny břišní do jater",
+"z plic do srdce"
+],
+correct: 1
+},
+{
+question: "Jaterní žíly ústí",
+answers: [
+"do dolní duté žíly",
+"do horní duté žíly",
+"do aorty"
+],
+correct: 0
+},
+{
+question: "Vláknina",
+answers: [
+"je nestravitelná a reguluje peristaltiku",
+"je zdroj Hb",
+"je hormon"
+],
+correct: 0
+},
+{
+question: "Člověk dokáže díky bakteriím",
+answers: [
+"trávit vlákninu",
+"tvořit inzulin",
+"tvořit Hb"
+],
+correct: 0
+},
+{
+question: "Homeostáza znamená",
+answers: [
+"stálost vnitřního prostředí",
+"rozpad buněk",
+"tvorbu tepla"
+],
+correct: 0
+},
+{
+question: "Ledviny leží",
+answers: [
+"po stranách bederní páteře",
+"v hrudníku",
+"v malé pánvi"
+],
+correct: 0
+},
+{
+question: "Močovina vzniká hlavně z",
+answers: [
+"tuků",
+"sacharidů",
+"aminokyselin"
+],
+correct: 2
+},
+{
+question: "Ledviny",
+answers: [
+"regulují glykémii",
+"udržují objem tekutin",
+"tvoří žluč"
+],
+correct: 1
+},
+{
+question: "Vodní hospodářství",
+answers: [
+"je řízeno nervově a látkově",
+"je řízeno jen vůlí",
+"není regulováno"
+],
+correct: 0
+},
+{
+question: "Základní funkční jednotka ledviny je",
+answers: [
+"alveolus",
+"nefron",
+"hepatocyt"
+],
+correct: 1
+},
+{
+question: "Moč se tvoří v",
+answers: [
+"močovodu",
+"ledvinách",
+"močovém měchýři"
+],
+correct: 1
+},
+{
+question: "Nefron obsahuje",
+answers: [
+"glomerulus a tubuly",
+"alveoly",
+"lymfatické cévy"
+],
+correct: 0
+},
+{
+question: "Primární moč vzniká",
+answers: [
+"v močovém měchýři",
+"v ledvinách",
+"v močové trubici"
+],
+correct: 1
+},
+{
+question: "Denně vznikne asi",
+answers: [
+"2 l primární moči",
+"20 l primární moči",
+"180 l primární moči"
+],
+correct: 2
+},
+{
+question: "Koncentrace moči",
+answers: [
+"stoupá směrem ke sběracím kanálkům",
+"klesá",
+"je stále stejná"
+],
+correct: 0
+},
+{
+question: "Prvním krokem tvorby moči je",
+answers: [
+"sekrece",
+"glomerulární filtrace",
+"resorpce"
+],
+correct: 1
+},
+{
+question: "Primární moč",
+answers: [
+"vzniká filtrací plazmy",
+"vzniká v močovodu",
+"obsahuje jen bílkoviny"
+],
+correct: 0
+},
+{
+question: "Primární moč vzniká",
+answers: [
+"sekrecí",
+"filtrací plazmy",
+"osmózou"
+],
+correct: 1
+},
+{
+question: "Největší resorpce probíhá",
+answers: [
+"v proximálním tubulu",
+"v močovodu",
+"v močové trubici"
+],
+correct: 0
+},
+{
+question: "K zahuštění moči dochází",
+answers: [
+"resorpcí vody",
+"filtrací Hb",
+"sekrecí tuků"
+],
+correct: 0
+},
+{
+question: "Denně vzniká definitivní moči asi",
+answers: [
+"0,1 l",
+"1,5–2 l",
+"10 l"
+],
+correct: 1
+},
+{
+question: "Glukóza se resorbuje hlavně",
+answers: [
+"v proximálním tubulu",
+"v močovém měchýři",
+"v Henleově kličce"
+],
+correct: 0
+},
+{
+question: "Jemná regulace iontů probíhá",
+answers: [
+"v distálním tubulu",
+"v glomerulu",
+"v močovodu"
+],
+correct: 0
+},
+{
+question: "ADH působí hlavně",
+answers: [
+"v ledvinách",
+"v žaludku",
+"v játrech"
+],
+correct: 0
+},
+{
+question: "ADH působí",
+answers: [
+"v distálním tubulu",
+"v alveolech",
+"v aortě"
+],
+correct: 0
+},
+{
+question: "Ledvinné papily",
+answers: [
+"obsahují vyústění sběrných kanálků",
+"jsou v močovodu",
+"jsou v močové trubici"
+],
+correct: 0
+},
+{
+question: "Moč odtéká z ledviny",
+answers: [
+"močovodem",
+"aortou",
+"lymfatickou cévou"
+],
+correct: 0
+},
+{
+question: "Filtrace krve probíhá",
+answers: [
+"v glomerulech",
+"v močovodu",
+"v močovém měchýři"
+],
+correct: 0
+},
+{
+question: "Ženská močová trubice",
+answers: [
+"je delší",
+"je kratší než mužská",
+"je stejně dlouhá"
+],
+correct: 1
+},
+{
+question: "Močovina vzniká hlavně",
+answers: [
+"v játrech",
+"v ledvinách",
+"ve slezině"
+],
+correct: 0
+},
+{
+question: "Látky se v ledvinách vstřebávají",
+answers: [
+"jen pasivně",
+"pasivně i aktivně",
+"jen aktivně"
+],
+correct: 1
+},
+{
+question: "Vzestup osmolarity plazmy",
+answers: [
+"snižuje sekreci ADH",
+"zvyšuje sekreci ADH",
+"nemá vliv"
+],
+correct: 1
+},
+{
+question: "Diuréza se zvyšuje",
+answers: [
+"při nedostatku vody",
+"při přebytku vody",
+"při hypoxii"
+],
+correct: 1
+},
+{
+question: "Glukóza v moči",
+answers: [
+"je vždy normální",
+"vzniká při překročení ledvinového prahu",
+"vzniká při nedostatku inzulinu jen ve svalech"
+],
+correct: 1
+},
+{
+question: "Pohlavní buňky se nazývají",
+answers: [
+"erytrocyty",
+"gamety",
+"neurony"
+],
+correct: 1
+},
+{
+question: "Nadvarle",
+answers: [
+"ústí do močovodu",
+"ústí do chámovodu",
+"ústí do ledviny"
+],
+correct: 1
+},
+{
+question: "Varlata",
+answers: [
+"produkují testosteron",
+"produkují žluč",
+"produkují inzulin"
+],
+correct: 0
+},
+{
+question: "Prostatou prochází",
+answers: [
+"močová trubice",
+"močovod",
+"aorta"
+],
+correct: 0
+},
+{
+question: "Těhotenství začíná",
+answers: [
+"ovulací",
+"uhnízděním vajíčka",
+"porodem"
+],
+correct: 1
+},
+{
+question: "Menstruační cyklus je typický pro",
+answers: [
+"muže",
+"ženy",
+"děti"
+],
+correct: 1
+},
+{
+question: "Ovulace nastává přibližně",
+answers: [
+"7. den",
+"14. den",
+"28. den"
+],
+correct: 1
+},
+{
+question: "Poševní vchod leží",
+answers: [
+"mezi poševním otvorem a močovou trubicí",
+"v močovodu",
+"v děloze"
+],
+correct: 0
+},
+{
+question: "Oplozené vajíčko je",
+answers: [
+"embryo",
+"zygota",
+"plod"
+],
+correct: 1
+},
+{
+question: "Děložní sliznice nejvíce roste",
+answers: [
+"v proliferační fázi",
+"při menstruaci",
+"po porodu"
+],
+correct: 0
+},
+{
+question: "Endokrinní systém tvoří",
+answers: [
+"nervy",
+"hormony",
+"kosti"
+],
+correct: 1
+},
+{
+question: "Endokrinní žlázy vylučují",
+answers: [
+"hormony do krve",
+"enzymy do střeva",
+"moč"
+],
+correct: 0
+},
+{
+question: "Hormony mají",
+answers: [
+"cílený efekt",
+"jen lokální účinek",
+"mechanický účinek"
+],
+correct: 0
+},
+{
+question: "Hormony",
+answers: [
+"udržují homeostázu",
+"tvoří Hb",
+"vedou vzruch"
+],
+correct: 0
+},
+{
+question: "Hormony působí",
+answers: [
+"na specifický receptor",
+"na všechny buňky stejně",
+"jen v krvi"
+],
+correct: 0
+},
+{
+question: "Účinek hormonu je zprostředkován",
+answers: [
+"receptorem",
+"erytrocytem",
+"Na+ pumpou"
+],
+correct: 0
+},
+{
+question: "Hypofýzu řídí",
+answers: [
+"hypotalamus",
+"mozeček",
+"mícha"
+],
+correct: 0
+},
+{
+question: "Tropní hormony",
+answers: [
+"řídí jiné žlázy",
+"tvoří moč",
+"štěpí tuky"
+],
+correct: 0
+},
+{
+question: "Statiny hypotalamu",
+answers: [
+"stimulují hypofýzu",
+"inhibují adenohypofýzu",
+"tvoří Hb"
+],
+correct: 1
+},
+{
+question: "Neurohypofýza uvolňuje",
+answers: [
+"ADH a oxytocin",
+"inzulin a glukagon",
+"kortizol"
+],
+correct: 0
+},
+{
+question: "Liberiny jsou",
+answers: [
+"stimulační hormony hypotalamu",
+"trávicí enzymy",
+"krevní bílkoviny"
+],
+correct: 0
+},
+{
+question: "Dřeň nadledvin tvoří",
+answers: [
+"adrenalin",
+"inzulin",
+"tyroxin"
+],
+correct: 0
+},
+{
+question: "STH je",
+answers: [
+"růstový hormon",
+"stresový hormon",
+"pohlavní hormon"
+],
+correct: 0
+},
+{
+question: "Růstový hormon ovlivňuje",
+answers: [
+"proteinový metabolismus",
+"tvorbu žluči",
+"srážení krve"
+],
+correct: 0
+},
+{
+question: "Nedostatek STH v dětství vede k",
+answers: [
+"gigantismu",
+"nanismu",
+"diabetu"
+],
+correct: 1
+},
+{
+question: "Gigantismus vzniká",
+answers: [
+"nedostatkem STH",
+"nadbytkem STH",
+"nedostatkem inzulinu"
+],
+correct: 1
+},
+{
+question: "STH",
+answers: [
+"podporuje proteosyntézu",
+"rozkládá Hb",
+"snižuje růst"
+],
+correct: 0
+},
+{
+question: "Somatotropin je",
+answers: [
+"růstový hormon",
+"kortikoid",
+"minerál"
+],
+correct: 0
+},
+{
+question: "STH nejvíce stoupá",
+answers: [
+"ve spánku",
+"po jídle",
+"při hypoglykémii jen u diabetiků"
+],
+correct: 0
+},
+{
+question: "ACTH působí",
+answers: [
+"na kůru nadledvin",
+"na slinivku",
+"na štítnou žlázu"
+],
+correct: 0
+},
+{
+question: "ACTH tvoří",
+answers: [
+"adenohypofýza",
+"neurohypofýza",
+"epifýza"
+],
+correct: 0
+},
+{
+question: "ACTH",
+answers: [
+"stimuluje kůru nadledvin",
+"stimuluje dřeň nadledvin",
+"blokuje kortizol"
+],
+correct: 0
+},
+{
+question: "TSH působí na",
+answers: [
+"štítnou žlázu",
+"slinivku",
+"varlata"
+],
+correct: 0
+},
+{
+question: "TSH se nazývá",
+answers: [
+"tyreotropin",
+"somatotropin",
+"prolaktin"
+],
+correct: 0
+},
+{
+question: "TSH",
+answers: [
+"řídí tvorbu hormonů štítné žlázy",
+"řídí tvorbu žluči",
+"řídí erytropoézu"
+],
+correct: 0
+},
+{
+question: "Prolaktin",
+answers: [
+"stimuluje laktaci",
+"stimuluje ovulaci",
+"snižuje růst"
+],
+correct: 0
+},
+{
+question: "Prolaktin je hormon",
+answers: [
+"adenohypofýzy",
+"neurohypofýzy",
+"nadledvin"
+],
+correct: 0
+},
+{
+question: "ADH znamená",
+answers: [
+"antidiuretický hormon",
+"adrenokortikotropní hormon",
+"aldosteron"
+],
+correct: 0
+},
+{
+question: "Působením ADH",
+answers: [
+"klesá množství moči",
+"stoupá diuréza",
+"klesá TK"
+],
+correct: 0
+},
+{
+question: "ADH",
+answers: [
+"zvyšuje zpětné vstřebávání vody",
+"zvyšuje tvorbu Hb",
+"blokuje Na+"
+],
+correct: 0
+},
+{
+question: "Při dehydrataci",
+answers: [
+"stoupá sekrece ADH",
+"klesá sekrece ADH",
+"ADH se nemění"
+],
+correct: 0
+},
+{
+question: "Diuréza",
+answers: [
+"se snižuje působením ADH",
+"se zvyšuje působením ADH",
+"nesouvisí s ADH"
+],
+correct: 0
+},
+{
+question: "Štítná žláza",
+answers: [
+"je nepárový orgán",
+"je párový orgán",
+"leží v dutině břišní"
+],
+correct: 1
+},
+{
+question: "Hormony štítné žlázy obsahují",
+answers: [
+"železo",
+"jod",
+"vápník"
+],
+correct: 1
+},
+{
+question: "Hormony štítné žlázy",
+answers: [
+"snižují metabolismus",
+"zvyšují bazální metabolismus",
+"nemají vliv na metabolismus"
+],
+correct: 1
+},
+{
+question: "Hormony štítné žlázy",
+answers: [
+"snižují SF",
+"zvyšují SF",
+"blokují sympatikus"
+],
+correct: 1
+},
+{
+question: "Tyreoidální hormony jsou",
+answers: [
+"aminokyseliny s navázaným jodem",
+"tuky",
+"sacharidy"
+],
+correct: 0
+},
+{
+question: "Funkce štítné žlázy závisí",
+answers: [
+"na přívodu jodu",
+"na přívodu železa",
+"na přívodu glukózy"
+],
+correct: 0
+},
+{
+question: "Tyreoidální hormony podporují",
+answers: [
+"anabolismus lipidů",
+"metabolismus a spotřebu kyslíku",
+"tvorbu žluči"
+],
+correct: 1
+},
+{
+question: "Hlavní hormon štítné žlázy je",
+answers: [
+"kortizol",
+"tyroxin",
+"inzulin"
+],
+correct: 1
+},
+{
+question: "Nedostatek hormonů štítné žlázy u dítěte vede",
+answers: [
+"k hypertrofii svalů",
+"k mentální retardaci",
+"k diabetu"
+],
+correct: 1
+},
+{
+question: "Hypertyreóza vede často k",
+answers: [
+"úbytku hmotnosti",
+"nárůstu tuku",
+"bradykardii"
+],
+correct: 0
+},
+{
+question: "Hypertyreóza často způsobuje",
+answers: [
+"tachykardii",
+"hypotermii",
+"ospalost"
+],
+correct: 0
+},
+{
+question: "Normální funkce štítné žlázy přispívá",
+answers: [
+"k pocitu teplotního komfortu",
+"k hypoxii",
+"k acidóze"
+],
+correct: 0
+},
+{
+question: "Hypotyreóza vede",
+answers: [
+"ke zrychlení psychiky",
+"ke zpomalení fyzických a mentálních procesů",
+"k hyperaktivitě"
+],
+correct: 1
+},
+{
+question: "Kalcitonin tvoří",
+answers: [
+"příštítná tělíska",
+"štítná žláza",
+"nadledviny"
+],
+correct: 1
+},
+{
+question: "Kalcitonin",
+answers: [
+"zvyšuje Ca v krvi",
+"snižuje Ca v krvi",
+"nemá vliv na Ca"
+],
+correct: 1
+},
+{
+question: "Parathormon tvoří",
+answers: [
+"příštítná tělíska",
+"epifýza",
+"slinivka"
+],
+correct: 0
+},
+{
+question: "Parathormon reguluje hlavně",
+answers: [
+"sodík",
+"vápník",
+"glukózu"
+],
+correct: 1
+},
+{
+question: "Parathormon",
+answers: [
+"snižuje kalcémii",
+"zvyšuje kalcémii",
+"blokuje osteoklasty"
+],
+correct: 1
+},
+{
+question: "Parathormon",
+answers: [
+"stimuluje uvolňování Ca z kostí",
+"blokuje kostní resorpci",
+"snižuje vstřebávání Ca"
+],
+correct: 0
+},
+{
+question: "Kalcitonin",
+answers: [
+"zvyšuje uvolňování Ca z kostí",
+"snižuje uvolňování Ca z kostí",
+"nemá vztah ke kostem"
+],
+correct: 1
+},
+{
+question: "Nedostatek Ca vede",
+answers: [
+"k pevným kostem",
+"k náchylnosti kostí ke zlomeninám",
+"k hypertrofii svalů"
+],
+correct: 1
+},
+{
+question: "Kalcitonin a parathormon působí",
+answers: [
+"synergicky",
+"antagonicky",
+"nezávisle"
+],
+correct: 1
+},
+{
+question: "Tetanie vzniká často",
+answers: [
+"při nedostatku parathormonu",
+"při nadbytku inzulinu",
+"při hyperglykémii"
+],
+correct: 0
+},
+{
+question: "Kalcitriol je",
+answers: [
+"aktivní forma vitaminu D",
+"hormon hypofýzy",
+"enzym"
+],
+correct: 0
+},
+{
+question: "Vitamin důležitý pro Ca metabolismus je",
+answers: [
+"A",
+"D",
+"K"
+],
+correct: 1
+},
+{
+question: "Vitamin D vzniká působením",
+answers: [
+"slunečního záření",
+"chladu",
+"hypoxie"
+],
+correct: 0
+},
+{
+question: "Vitamin D",
+answers: [
+"snižuje vstřebávání Ca",
+"zvyšuje vstřebávání Ca a fosfátů",
+"blokuje osteoblasty"
+],
+correct: 1
+},
+{
+question: "Vitamin D vzniká",
+answers: [
+"v kůži působením UV",
+"v žaludku",
+"ve slezině"
+],
+correct: 0
+},
+{
+question: "Vitamin D se tvoří lépe",
+answers: [
+"během dne na slunci",
+"během noci",
+"při hypoxii"
+],
+correct: 0
+},
+{
+question: "Nedostatek vitaminu D u dětí vede",
+answers: [
+"k rachitidě",
+"k diabetu",
+"k hypertrofii svalů"
+],
+correct: 0
+},
+{
+question: "Vitamin D podporuje",
+answers: [
+"tvorbu kostí a zubů",
+"rozpad kostí",
+"tvorbu Hb"
+],
+correct: 0
+},
+{
+question: "Vápník je důležitý pro",
+answers: [
+"kontrakci svalů",
+"jen tvorbu kostí",
+"jen vedení vzruchu"
+],
+correct: 0
+},
+{
+question: "Vápník se účastní",
+answers: [
+"srážení krve",
+"tvorby glukózy",
+"trávení tuků"
+],
+correct: 0
+},
+{
+question: "Fosfáty v kostech jsou spojeny",
+answers: [
+"se sodíkem",
+"s vápníkem",
+"s draslíkem"
+],
+correct: 1
+},
+{
+question: "Hlavní hormony pankreatu jsou",
+answers: [
+"glukagon a inzulin",
+"kortizol a adrenalin",
+"TSH a ACTH"
+],
+correct: 0
+},
+{
+question: "Inzulin tvoří",
+answers: [
+"alfa-buňky",
+"beta-buňky",
+"hepatocyty"
+],
+correct: 1
+},
+{
+question: "Inzulin je",
+answers: [
+"katabolický hormon",
+"silně anabolický hormon",
+"stresový hormon"
+],
+correct: 1
+},
+{
+question: "Sekreci inzulinu stimuluje",
+answers: [
+"hypoglykémie",
+"hyperglykémie",
+"hypoxie"
+],
+correct: 1
+},
+{
+question: "Inzulin",
+answers: [
+"zvyšuje glykémii",
+"snižuje glykémii",
+"nemá vliv na glukózu"
+],
+correct: 1
+},
+{
+question: "Inzulin umožňuje",
+answers: [
+"vstup glukózy do buněk",
+"rozpad Hb",
+"tvorbu žluči"
+],
+correct: 0
+},
+{
+question: "Inzulin podporuje vstup glukózy hlavně do",
+answers: [
+"svalových buněk",
+"erytrocytů",
+"neuronů"
+],
+correct: 0
+},
+{
+question: "Inzulin podporuje ukládání glukózy",
+answers: [
+"do tukových buněk",
+"do alveolů",
+"do žlučníku"
+],
+correct: 0
+},
+{
+question: "Inzulin podporuje tvorbu",
+answers: [
+"svalového glykogenu",
+"močoviny",
+"Hb"
+],
+correct: 0
+},
+{
+question: "Inzulin podporuje",
+answers: [
+"ukládání tuků",
+"lipolýzu",
+"glukoneogenezi"
+],
+correct: 0
+},
+{
+question: "Citlivost na inzulin je u trénovaných",
+answers: [
+"vyšší",
+"nižší",
+"stejná"
+],
+correct: 0
+},
+{
+question: "Diabetes II. typu je",
+answers: [
+"na inzulinu závislý",
+"na inzulinu nezávislý",
+"vždy vrozený"
+],
+correct: 1
+},
+{
+question: "Pohyb snižuje glykémii",
+answers: [
+"umožněním vstupu glukózy do svalů",
+"blokací inzulinu",
+"tvorbou Hb"
+],
+correct: 0
+},
+{
+question: "Diabetes mellitus souvisí",
+answers: [
+"s inzulinem",
+"s tyroxinem",
+"s kortizolem"
+],
+correct: 0
+},
+{
+question: "Typický příznak diabetu je",
+answers: [
+"žízeň",
+"bradykardie",
+"hypotermie"
+],
+correct: 0
+},
+{
+question: "Diabetes je spojen s",
+answers: [
+"hyperglykémií",
+"hypoglykémií",
+"alkalózou"
+],
+correct: 0
+},
+{
+question: "Glukagon tvoří",
+answers: [
+"alfa-buňky pankreatu",
+"beta-buňky pankreatu",
+"hypofýza"
+],
+correct: 0
+},
+{
+question: "Glukagon",
+answers: [
+"snižuje glykémii",
+"zvyšuje glykémii",
+"blokuje lipolýzu"
+],
+correct: 1
+},
+{
+question: "Inzulin a glukagon působí",
+answers: [
+"synergicky",
+"antagonicky",
+"nezávisle"
+],
+correct: 1
+},
+{
+question: "Nadledviny",
+answers: [
+"leží v dutině hrudní",
+"leží nad ledvinami",
+"jsou součástí mozku"
+],
+correct: 1
+},
+{
+question: "Nedostatek aldosteronu vede",
+answers: [
+"k retenci draslíku",
+"ke ztrátě draslíku",
+"k hyperglykémii"
+],
+correct: 0
+},
+{
+question: "Kortikoidy jsou",
+answers: [
+"deriváty cholesterolu",
+"aminokyseliny",
+"sacharidy"
+],
+correct: 0
+},
+{
+question: "Kortikoidy tvoří",
+answers: [
+"dřeň nadledvin",
+"kůra nadledvin",
+"hypofýza"
+],
+correct: 1
+},
+{
+question: "Aldosteron",
+answers: [
+"zvyšuje resorpci sodíku",
+"snižuje resorpci vody",
+"blokuje ADH"
+],
+correct: 0
+},
+{
+question: "Sekrece aldosteronu je stimulována",
+answers: [
+"nízkým Na a vysokým K",
+"vysokým Na a nízkým K",
+"hyperglykémií"
+],
+correct: 0
+},
+{
+question: "Aldosteron reguluje hlavně",
+answers: [
+"sodík",
+"glukózu",
+"železo"
+],
+correct: 0
+},
+{
+question: "Aldosteron",
+answers: [
+"zadržuje Na a vylučuje K",
+"vylučuje Na",
+"blokuje resorpci vody"
+],
+correct: 0
+},
+{
+question: "Při poklesu TK",
+answers: [
+"klesá sekrece aldosteronu",
+"stoupá sekrece aldosteronu",
+"aldosteron se nemění"
+],
+correct: 1
+},
+{
+question: "Aldosteron je řízen",
+answers: [
+"RAAS",
+"parasympatikem",
+"inzulinem"
+],
+correct: 0
+},
+{
+question: "Kortizol tvoří",
+answers: [
+"dřeň nadledvin",
+"kůra nadledvin",
+"epifýza"
+],
+correct: 1
+},
+{
+question: "Kortizol je",
+answers: [
+"stresový hormon",
+"pohlavní hormon",
+"trávicí enzym"
+],
+correct: 0
+},
+{
+question: "Kortizol",
+answers: [
+"působí protizánětlivě",
+"blokuje lipolýzu",
+"snižuje glykémii"
+],
+correct: 0
+},
+{
+question: "Kortizol",
+answers: [
+"zvyšuje lipolýzu",
+"blokuje rozklad tuků",
+"snižuje metabolismus"
+],
+correct: 0
+},
+{
+question: "Hlavní glukokortikoid je",
+answers: [
+"aldosteron",
+"kortizol",
+"adrenalin"
+],
+correct: 1
+},
+{
+question: "Kortizol působí",
+answers: [
+"na zvýšení glykémie",
+"na snížení glykémie",
+"na tvorbu Hb"
+],
+correct: 0
+},
+{
+question: "Kortizol má účinky",
+answers: [
+"anabolické",
+"katabolické",
+"bez metabolického účinku"
+],
+correct: 1
+},
+{
+question: "Sekrece kortizolu má rytmus",
+answers: [
+"cirkadiánní",
+"náhodný",
+"bez rytmu"
+],
+correct: 0
+},
+{
+question: "Kortizol",
+answers: [
+"snižuje citlivost na inzulin",
+"zvyšuje citlivost na inzulin",
+"nemá vztah k inzulinu"
+],
+correct: 0
+},
+{
+question: "Katecholaminy vznikají",
+answers: [
+"v kůře nadledvin",
+"ve dřeni nadledvin",
+"v hypofýze"
+],
+correct: 1
+},
+{
+question: "Katecholaminy jsou",
+answers: [
+"adrenalin a noradrenalin",
+"inzulin a glukagon",
+"TSH a ACTH"
+],
+correct: 0
+},
+{
+question: "Adrenalin a noradrenalin",
+answers: [
+"jsou sekundární poslové",
+"jsou katecholaminy",
+"jsou steroidy"
+],
+correct: 1
+},
+{
+question: "Adrenalin tvoří",
+answers: [
+"kůra nadledvin",
+"dřeň nadledvin",
+"štítná žláza"
+],
+correct: 1
+},
+{
+question: "Adrenalin zvyšuje",
+answers: [
+"srdeční frekvenci",
+"diurézu",
+"spánek"
+],
+correct: 0
+},
+{
+question: "Adrenalin způsobuje",
+answers: [
+"vazodilataci ve svalech",
+"vazokonstrikci všech cév",
+"pokles metabolismu"
+],
+correct: 0
+},
+{
+question: "Adrenalin zvyšuje TK",
+answers: [
+"zvýšením SF a kontraktility",
+"poklesem SF",
+"blokádou sympatiku"
+],
+correct: 0
+},
+{
+question: "Adrenalin zvyšuje metabolismus",
+answers: [
+"zpomalením dýchání",
+"zrychlením metabolismu",
+"snížením teploty"
+],
+correct: 1
+},
+{
+question: "Nedostatek adrenalinu vede",
+answers: [
+"k hypertenzi",
+"k poklesu TK",
+"k tachykardii"
+],
+correct: 1
+},
+{
+question: "Erytropoetin",
+answers: [
+"stimuluje tvorbu erytrocytů",
+"blokuje erytropoézu",
+"štěpí Hb"
+],
+correct: 0
+},
+{
+question: "Erytropoetin vzniká",
+answers: [
+"v játrech",
+"v ledvinách",
+"ve slezině"
+],
+correct: 1
+},
+{
+question: "Sekreci erytropoetinu stimuluje",
+answers: [
+"hyperoxie",
+"hypoxie",
+"hyperglykémie"
+],
+correct: 1
+},
+{
+question: "Melatonin tvoří",
+answers: [
+"epifýza",
+"nadledviny",
+"štítná žláza"
+],
+correct: 0
+},
+{
+question: "Melatonin",
+answers: [
+"řídí biorytmy",
+"zvyšuje glykémii",
+"blokuje spánek"
+],
+correct: 0
+},
+{
+question: "Cholesterol je",
+answers: [
+"prekurzor steroidních hormonů",
+"aminokyselina",
+"enzym"
+],
+correct: 0
+},
+{
+question: "Testosteron vzniká",
+answers: [
+"v Leydigových buňkách",
+"v beta-buňkách",
+"v hypofýze"
+],
+correct: 0
+},
+{
+question: "Testosteron podporuje",
+answers: [
+"sekundární pohlavní znaky",
+"tvorbu žluči",
+"pokles svalové hmoty"
+],
+correct: 0
+},
+{
+question: "Testosteron",
+answers: [
+"oddaluje ukončení růstu kostí",
+"blokuje růst",
+"nemá vliv na kost"
+],
+correct: 0
+},
+{
+question: "Estrogeny",
+answers: [
+"stimulují vývoj prsů",
+"blokují růst dělohy",
+"snižují metabolismus"
+],
+correct: 0
+},
+{
+question: "Estrogeny",
+answers: [
+"řídí menstruační cyklus",
+"řídí erytropoézu",
+"blokují ovulaci"
+],
+correct: 0
+},
+{
+question: "Estrogeny podporují",
+answers: [
+"růst pohlavních orgánů",
+"atrofii svalů",
+"pokles kostní hmoty"
+],
+correct: 0
+},
+{
+question: "ANP vzniká",
+answers: [
+"v komorách při natažení",
+"v játrech",
+"v hypofýze"
+],
+correct: 0
+},
+{
+question: "ANP se tvoří při",
+answers: [
+"nízkém TK",
+"zvýšeném TK v síních",
+"hypoxii"
+],
+correct: 1
+},
+{
+question: "ANP",
+answers: [
+"snižuje resorpci sodíku",
+"zvyšuje resorpci Na",
+"zvyšuje aldosteron"
+],
+correct: 0
+},
+{
+question: "ANP způsobuje",
+answers: [
+"vyšší vylučování Na a vody",
+"retenci vody",
+"hyperglykémii"
+],
+correct: 0
+},
+{
+question: "ANP",
+answers: [
+"snižuje působení aldosteronu",
+"zvyšuje aldosteron",
+"nemá vztah k ledvinám"
+],
+correct: 0
+},
+{
+question: "Nervová soustava je",
+answers: [
+"chemický systém",
+"koordinační systém organismu",
+"trávicí orgán"
+],
+correct: 1
+},
+{
+question: "CNS tvoří",
+answers: [
+"mozek a mícha",
+"srdce a cévy",
+"žlázy"
+],
+correct: 0
+},
+{
+question: "Neurony",
+answers: [
+"se dělí celý život rychle",
+"mají omezenou schopnost dělení",
+"se nikdy neobnovují"
+],
+correct: 1
+},
+{
+question: "Hlavním zdrojem energie pro neurony je",
+answers: [
+"glukóza",
+"mastné kyseliny",
+"ketony"
+],
+correct: 0
+},
+{
+question: "Dlouhý výběžek neuronu je",
+answers: [
+"dendrit",
+"axon",
+"synapse"
+],
+correct: 1
+},
+{
+question: "Akční potenciál vzniká",
+answers: [
+"dle zákona vše nebo nic",
+"postupně podle síly",
+"jen při hypoxii"
+],
+correct: 0
+},
+{
+question: "Podprahový podnět",
+answers: [
+"vyvolá AP",
+"nevyvolá odpověď",
+"vede k tetanu"
+],
+correct: 1
+},
+{
+question: "Vznik AP souvisí s",
+answers: [
+"depolarizací",
+"filtrací",
+"hemolýzou"
+],
+correct: 0
+},
+{
+question: "Vedení vzruchu je rychlejší",
+answers: [
+"u nemyelinizovaných vláken",
+"u myelinizovaných vláken",
+"u svalových vláken"
+],
+correct: 1
+},
+{
+question: "Saltatorní vedení je typické pro",
+answers: [
+"myelinizovaná vlákna",
+"svaly",
+"erytrocyty"
+],
+correct: 0
+},
+{
+question: "Spojení neuronů se nazývá",
+answers: [
+"myofibrila",
+"synapse",
+"sarkomera"
+],
+correct: 1
+},
+{
+question: "Přenos přes synapsi probíhá",
+answers: [
+"obousměrně",
+"jedním směrem",
+"bez mediátoru"
+],
+correct: 1
+},
+{
+question: "Synapse je",
+answers: [
+"neunavitelná",
+"unavitelná",
+"bez metabolické aktivity"
+],
+correct: 1
+},
+{
+question: "Reflexní oblouk je",
+answers: [
+"dráha reflexu",
+"část srdce",
+"část alveolu"
+],
+correct: 0
+},
+{
+question: "Gliové buňky",
+answers: [
+"mají podpůrnou funkci",
+"tvoří Hb",
+"jsou svalové buňky"
+],
+correct: 0
+},
+{
+question: "Myelin tvoří",
+answers: [
+"gliové buňky",
+"erytrocyty",
+"osteoblasty"
+],
+correct: 0
+},
+{
+question: "Mícha",
+answers: [
+"je centrem základních reflexů",
+"řídí trávení",
+"tvoří hormony"
+],
+correct: 0
+},
+{
+question: "Míšních nervů je",
+answers: [
+"12 párů",
+"31 párů",
+"50 párů"
+],
+correct: 1
+},
+{
+question: "Bílá hmota míchy je tvořena",
+answers: [
+"myelinizovanými vlákny",
+"erytrocyty",
+"osteocyty"
+],
+correct: 0
+},
+{
+question: "Šedá hmota míchy je",
+answers: [
+"na povrchu",
+"uvnitř míchy",
+"jen v mozku"
+],
+correct: 1
+},
+{
+question: "Mícha je centrem",
+answers: [
+"míšních reflexů",
+"tvorby Hb",
+"glykémie"
+],
+correct: 0
+},
+{
+question: "Mozkový kmen tvoří",
+answers: [
+"prodloužená mícha a mezimozek",
+"jen mozeček",
+"jen hemisféry"
+],
+correct: 0
+},
+{
+question: "Koordinaci pohybů řídí",
+answers: [
+"mozeček",
+"játra",
+"hypofýza"
+],
+correct: 0
+},
+{
+question: "Dýchací centrum je v",
+answers: [
+"prodloužené míše",
+"mozečku",
+"hypotalamu"
+],
+correct: 0
+},
+{
+question: "Střední mozek je",
+answers: [
+"mesencephalon",
+"diencephalon",
+"medulla oblongata"
+],
+correct: 0
+},
+{
+question: "Mozkový kmen zahrnuje",
+answers: [
+"prodlouženou míchu, most a střední mozek",
+"jen hemisféry",
+"jen mozeček"
+],
+correct: 0
+},
+{
+question: "Zadní mozek tvoří",
+answers: [
+"mozeček, most a prodloužená mícha",
+"mezimozek",
+"hemisféry"
+],
+correct: 0
+},
+{
+question: "Mezimozek obsahuje",
+answers: [
+"thalamus a hypothalamus",
+"mozeček",
+"bazální ganglia"
+],
+correct: 0
+},
+{
+question: "Mesencephalon je",
+answers: [
+"střední mozek",
+"mezimozek",
+"mozeček"
+],
+correct: 0
+},
+{
+question: "Thalamus znamená",
+answers: [
+"lůžko",
+"most",
+"uzel"
+],
+correct: 0
+},
+{
+question: "Thalamus je",
+answers: [
+"přepojovací stanice drah",
+"část hypofýzy",
+"část míchy"
+],
+correct: 0
+},
+{
+question: "Vestibulární centrum souvisí s",
+answers: [
+"rovnováhou",
+"trávením",
+"erytropoézou"
+],
+correct: 0
+},
+{
+question: "Mozeček",
+answers: [
+"má šest laloků",
+"je centrem rovnováhy a koordinace",
+"tvoří hormony"
+],
+correct: 1
+},
+{
+question: "Koordinace pohybů probíhá hlavně v",
+answers: [
+"mozečku",
+"játrech",
+"míše"
+],
+correct: 0
+},
+{
+question: "Motorické učení závisí na",
+answers: [
+"mozečku",
+"slezině",
+"pankreatu"
+],
+correct: 0
+},
+{
+question: "Bazální ganglia",
+answers: [
+"ovlivňují motoriku",
+"tvoří moč",
+"jsou součást ledvin"
+],
+correct: 0
+},
+{
+question: "Poruchy bazálních ganglií vedou",
+answers: [
+"k poruchám pohybu",
+"k hyperglykémii",
+"k hypoxii"
+],
+correct: 0
+},
+{
+question: "Limbický systém",
+answers: [
+"souvisí s emocemi",
+"řídí filtraci moči",
+"tvoří Hb"
+],
+correct: 0
+},
+{
+question: "Emoce souvisejí s",
+answers: [
+"limbickým systémem",
+"alveoly",
+"glomeruly"
+],
+correct: 0
+},
+{
+question: "Čichový mozek je",
+answers: [
+"nejstarší část kůry",
+"část mozečku",
+"část hypofýzy"
+],
+correct: 0
+},
+{
+question: "Neokortex",
+answers: [
+"je typický pro savce",
+"je jen u ryb",
+"nemá vrstvy"
+],
+correct: 0
+},
+{
+question: "Velký mozek tvoří",
+answers: [
+"dvě hemisféry",
+"jednu hemisféru",
+"jen mozkový kmen"
+],
+correct: 0
+},
+{
+question: "Asociační spoje propojují",
+answers: [
+"korová pole jedné hemisféry",
+"obě hemisféry",
+"míchu s mozkem"
+],
+correct: 0
+},
+{
+question: "Komisurální spoje propojují",
+answers: [
+"obě hemisféry",
+"míšní nervy",
+"mozeček s míchou"
+],
+correct: 0
+},
+{
+question: "Projekční dráhy spojují",
+answers: [
+"kůru s hlubšími strukturami",
+"jen hemisféry",
+"jen mozeček"
+],
+correct: 0
+},
+{
+question: "Hlavových nervů je",
+answers: [
+"12",
+"31",
+"24"
+],
+correct: 0
+},
+{
+question: "Zrakové centrum je v laloku",
+answers: [
+"týlním",
+"čelním",
+"spánkovém"
+],
+correct: 0
+},
+{
+question: "Sluchové centrum je v laloku",
+answers: [
+"spánkovém",
+"týlním",
+"temenním"
+],
+correct: 0
+},
+{
+question: "Vědomí sídlí hlavně",
+answers: [
+"v mozkové kůře",
+"v míše",
+"v ledvinách"
+],
+correct: 0
+},
+{
+question: "Motorické centrum je v laloku",
+answers: [
+"čelním",
+"týlním",
+"spánkovém"
+],
+correct: 0
+},
+{
+question: "Řečové centrum bývá v laloku",
+answers: [
+"spánkovém",
+"okcipitálním",
+"mozečku"
+],
+correct: 0
+},
+{
+question: "Pyramidové dráhy začínají",
+answers: [
+"v motorické kůře",
+"v míše",
+"v hypotalamu"
+],
+correct: 0
+},
+{
+question: "Primární motorická oblast je v",
+answers: [
+"gyrus precentralis",
+"gyrus postcentralis",
+"thalamu"
+],
+correct: 0
+},
+{
+question: "Křížení pyramidových drah je",
+answers: [
+"v prodloužené míše",
+"v mozečku",
+"v hypofýze"
+],
+correct: 0
+},
+{
+question: "Nervosvalové ploténky jsou na",
+answers: [
+"motoneuronech",
+"erytrocytech",
+"osteocytech"
+],
+correct: 0
+},
+{
+question: "Senzitivní korová oblast je v",
+answers: [
+"gyrus postcentralis",
+"gyrus precentralis",
+"thalamu"
+],
+correct: 0
+},
+{
+question: "Pia mater je",
+answers: [
+"tvrdá plena",
+"měkká plena",
+"střední plena"
+],
+correct: 1
+},
+{
+question: "Mozkomíšní mok vzniká hlavně",
+answers: [
+"v postranních komorách",
+"v míše",
+"v hypotalamu"
+],
+correct: 0
+},
+{
+question: "Liquor cerebrospinalis je",
+answers: [
+"mozkomíšní mok",
+"krevní plazma",
+"lymfa"
+],
+correct: 0
+},
+{
+question: "Autonomní nervový systém",
+answers: [
+"řídí hladkou svalovinu a žlázy",
+"řídí jen kosterní svaly",
+"řídí jen vědomé pohyby"
+],
+correct: 0
+},
+{
+question: "ANS ovlivňuje",
+answers: [
+"vnitřní orgány",
+"jen kosterní svaly",
+"jen CNS"
+],
+correct: 0
+},
+{
+question: "ANS je",
+answers: [
+"součást CNS",
+"periferní nervový systém",
+"kosterní systém"
+],
+correct: 1
+},
+{
+question: "Vyšší centrum ANS je v",
+answers: [
+"hypothalamu",
+"mozečku",
+"míše"
+],
+correct: 0
+},
+{
+question: "Nervová tkáň je tvořena",
+answers: [
+"neurony",
+"osteocyty",
+"erytrocyty"
+],
+correct: 0
+},
+{
+question: "Přenos v ANS probíhá",
+answers: [
+"pomocí mediátorů a receptorů",
+"mechanicky",
+"bez receptorů"
+],
+correct: 0
+},
+{
+question: "Autonomní dráha je",
+answers: [
+"jednoneuronová",
+"dvouneuronová",
+"čtyřneuronová"
+],
+correct: 1
+},
+{
+question: "Sympatikus je",
+answers: [
+"kraniosakrální",
+"thorakolumbální",
+"mozkový"
+],
+correct: 1
+},
+{
+question: "Sympatikus se aktivuje",
+answers: [
+"v klidu",
+"při stresu a zátěži",
+"ve spánku"
+],
+correct: 1
+},
+{
+question: "Centra sympatiku jsou",
+answers: [
+"v hrudní a bederní míše",
+"v křížové míše",
+"v mozečku"
+],
+correct: 0
+},
+{
+question: "Ganglia parasympatiku leží",
+answers: [
+"u cílových orgánů",
+"u míchy",
+"v mozku"
+],
+correct: 0
+},
+{
+question: "Hlavní mediátor sympatiku je",
+answers: [
+"acetylcholin",
+"noradrenalin",
+"dopamin"
+],
+correct: 1
+},
+{
+question: "Postgangliová vlákna sympatiku uvolňují",
+answers: [
+"noradrenalin",
+"inzulin",
+"kortizol"
+],
+correct: 0
+},
+{
+question: "Dřeň nadledvin",
+answers: [
+"je modifikované sympatické ganglion",
+"je část hypofýzy",
+"je část jater"
+],
+correct: 0
+},
+{
+question: "Parasympatikus se aktivuje",
+answers: [
+"při stresu",
+"v období klidu a regenerace",
+"jen při hypoxii"
+],
+correct: 1
+},
+{
+question: "Pregangliová vlákna ANS uvolňují",
+answers: [
+"acetylcholin",
+"adrenalin",
+"glukagon"
+],
+correct: 0
+},
+{
+question: "Mediátorem parasympatiku je",
+answers: [
+"acetylcholin",
+"noradrenalin",
+"kortizol"
+],
+correct: 0
+},
+{
+question: "Sympatikus",
+answers: [
+"zrychluje srdeční činnost",
+"způsobuje trávení",
+"snižuje TK"
+],
+correct: 0
+},
+{
+question: "Parasympatikus",
+answers: [
+"podporuje trávení",
+"zvyšuje SF",
+"blokuje sekreci"
+],
+correct: 0
+},
+{
+question: "Reflex je",
+answers: [
+"vědomá odpověď",
+"automatická odpověď",
+"endokrinní děj"
+],
+correct: 1
+},
+{
+question: "Svalová vřeténka jsou",
+answers: [
+"proprioceptory",
+"termoreceptory",
+"chemoreceptory"
+],
+correct: 0
+},
+{
+question: "Svalové vřeténko registruje",
+answers: [
+"délku svalu",
+"tlak krve",
+"glykémii"
+],
+correct: 0
+},
+{
+question: "Napínací reflex",
+answers: [
+"vede ke kontrakci svalu",
+"vede k relaxaci",
+"nemá odpověď"
+],
+correct: 0
+},
+{
+question: "Podprahový podnět",
+answers: [
+"vyvolá reflex",
+"nereaguje",
+"vede k tetanu"
+],
+correct: 1
+},
+{
+question: "Interoreceptory registrují",
+answers: [
+"vnitřní prostředí",
+"polohu těla",
+"světlo"
+],
+correct: 0
+},
+{
+question: "Proprioceptory registrují",
+answers: [
+"polohu a pohyb",
+"teplotu",
+"chemické změny"
+],
+correct: 0
+},
+{
+question: "Zrak poskytuje asi",
+answers: [
+"20 % informací",
+"50 % informací",
+"80 % informací"
+],
+correct: 2
+},
+{
+question: "Barevné vidění zajišťují",
+answers: [
+"tyčinky",
+"čípky",
+"neurony"
+],
+correct: 1
+},
+{
+question: "Čočka je zavěšena",
+answers: [
+"na vláknech řasnatého tělíska",
+"v komorách",
+"na sítnici"
+],
+correct: 0
+},
+{
+question: "Krátkozrakost znamená obraz",
+answers: [
+"před sítnicí",
+"za sítnicí",
+"na sítnici"
+],
+correct: 0
+},
+{
+question: "Hlemýžď",
+answers: [
+"je kostěný",
+"je sval",
+"je část oka"
+],
+correct: 0
+},
+{
+question: "Cortiho orgán je",
+answers: [
+"ve hlemýždi",
+"v oku",
+"v hypofýze"
+],
+correct: 0
+},
+{
+question: "Vestibulární aparát souvisí",
+answers: [
+"se sluchem",
+"s rovnováhou",
+"s trávením"
+],
+correct: 1
+},
+{
+question: "Obraz na sítnici je",
+answers: [
+"převrácený a zmenšený",
+"zvětšený",
+"vzniká v mozku"
+],
+correct: 0
+},
+{
+question: "Dalekozrakost znamená obraz",
+answers: [
+"za sítnicí",
+"před sítnicí",
+"na rohovce"
+],
+correct: 0
+},
+{
+question: "Slyšitelné frekvence jsou asi",
+answers: [
+"20–20000 Hz",
+"1–100 Hz",
+"100000 Hz"
+],
+correct: 0
+},
+{
+question: "Čípky",
+answers: [
+"zajišťují barevné vidění",
+"fungují hlavně za tmy",
+"obsahují rhodopsin"
+],
+correct: 0
+},
+{
+question: "Žlutá skvrna",
+answers: [
+"obsahuje hlavně čípky",
+"obsahuje jen tyčinky",
+"je slepá skvrna"
+],
+correct: 0
+},
+{
+question: "Rhodopsin je",
+answers: [
+"zrakový purpur",
+"sluchový pigment",
+"trávicí enzym"
+],
+correct: 0
+},
+{
+question: "Cévnatka je vrstva",
+answers: [
+"oka",
+"srdce",
+"kůže"
+],
+correct: 0
+},
+{
+question: "Čočka leží",
+answers: [
+"za duhovkou",
+"před rohovkou",
+"v sítnici"
+],
+correct: 0
+},
+{
+question: "Polokruhovité kanálky reagují",
+answers: [
+"na proudění endolymfy",
+"na tlak krve",
+"na světlo"
+],
+correct: 0
+},
+{
+question: "Vnitřní ucho je v části",
+answers: [
+"skalní kost",
+"čelní kost",
+"temenní kost"
+],
+correct: 0
+},
+{
+question: "Přední komora oka je",
+answers: [
+"mezi rohovkou a duhovkou",
+"za sítnicí",
+"v čočce"
+],
+correct: 0
+},
+{
+question: "Skléra je",
+answers: [
+"neprůhledná",
+"zcela průhledná",
+"tekutá"
+],
+correct: 0
+},
+{
+question: "Změna zakřivení čočky je",
+answers: [
+"akomodace",
+"adaptace",
+"filtrace"
+],
+correct: 0
+},
+{
+question: "Nejmenší sluchová kůstka je",
+answers: [
+"kladívko",
+"třmínek",
+"kovadlinka"
+],
+correct: 1
+},
+{
+question: "Cortiho orgán je uložen",
+answers: [
+"ve vnitřním uchu",
+"ve středním uchu",
+"v zevním uchu"
+],
+correct: 0
+},
+{
+question: "Polokruhovité kanálky",
+answers: [
+"jsou součástí rovnovážného ústrojí",
+"slouží k čichu",
+"jsou v sítnici"
+],
+correct: 0
+},
+{
+question: "Největší citlivost oka je kolem",
+answers: [
+"550 nm",
+"200 nm",
+"900 nm"
+],
+correct: 0
+},
+{
+question: "Vitamin A je důležitý pro",
+answers: [
+"tvorbu zrakového purpuru",
+"tvorbu Hb",
+"tvorbu inzulinu"
+],
+correct: 0
+},
+{
+question: "Nervus vestibulocochlearis je",
+answers: [
+"sluchově rovnovážný nerv",
+"zrakový nerv",
+"čichový nerv"
+],
+correct: 0
+},
+{
+question: "Sluchové centrum je v laloku",
+answers: [
+"spánkovém",
+"čelním",
+"týlním"
+],
+correct: 0
+},
+{
+question: "Počet čípků je asi",
+answers: [
+"6–7 milionů",
+"120 milionů",
+"1 milion"
+],
+correct: 0
+},
+{
+question: "Počet tyčinek je asi",
+answers: [
+"6 milionů",
+"120 milionů",
+"500 tisíc"
+],
+correct: 1
+},
+{
+question: "Mechanoreceptory reagují",
+answers: [
+"na mechanické podněty",
+"na světlo",
+"na chemické látky"
+],
+correct: 0
+},
+{
+question: "Sluchové receptory reagují",
+answers: [
+"na vibrace",
+"na světlo",
+"na tlak krve"
+],
+correct: 0
+},
+{
+question: "Termoreceptory reagují",
+answers: [
+"na teplo",
+"na zvuk",
+"na světlo"
+],
+correct: 0
+},
+{
+question: "Baroreceptory reagují",
+answers: [
+"na tlak",
+"na chuť",
+"na pach"
+],
+correct: 0
+},
+{
+question: "Merkelovy receptory reagují",
+answers: [
+"na pomalý tlak",
+"na světlo",
+"na chuť"
+],
+correct: 0
+},
+{
+question: "Ve vnitřním uchu je",
+answers: [
+"endolymfa",
+"krev",
+"žluč"
+],
+correct: 0
+},
+{
+question: "Čichové receptory jsou",
+answers: [
+"v horní části nosní dutiny",
+"v hrtanu",
+"v průdušnici"
+],
+correct: 0
+},
+{
+question: "Čich souvisí s",
+answers: [
+"čichovým mozkem",
+"mozečkem",
+"míchou"
+],
+correct: 0
+},
+{
+question: "Centrum termoregulace je v",
+answers: [
+"hypotalamu",
+"mozečku",
+"míše"
+],
+correct: 0
+},
+{
+question: "Teplotní centrum je",
+answers: [
+"v hypotalamu",
+"v srdci",
+"v ledvinách"
+],
+correct: 0
+},
+{
+question: "Významným izolantem je",
+answers: [
+"podkožní tuk",
+"sval",
+"krev"
+],
+correct: 0
+},
+{
+question: "Termoreceptory jsou hlavně",
+answers: [
+"v kůži",
+"v kostech",
+"v játrech"
+],
+correct: 0
+},
+{
+question: "Normální tělesná teplota je",
+answers: [
+"36–37 °C",
+"34 °C",
+"40 °C"
+],
+correct: 0
+},
+{
+question: "Fyziologická teplota člověka je",
+answers: [
+"36–37 °C",
+"32 °C",
+"39–40 °C"
+],
+correct: 0
+},
+{
+question: "Teplo je v těle rozváděno",
+answers: [
+"krví",
+"lymfou",
+"vzduchem"
+],
+correct: 0
+},
+{
+question: "Termoregulaci",
+answers: [
+"si většinou neuvědomujeme",
+"řídíme plně vědomě",
+"nelze ovlivnit"
+],
+correct: 0
+},
+{
+question: "Nejvyšší teplota bývá během",
+answers: [
+"dne",
+"rána",
+"noci"
+],
+correct: 0
+},
+{
+question: "Tělesná teplota",
+answers: [
+"má cirkadiánní rytmus",
+"je stále stejná",
+"nemění se"
+],
+correct: 0
+},
+{
+question: "Nejvíce tepla vzniká",
+answers: [
+"ve svalech",
+"v kostech",
+"v močovém měchýři"
+],
+correct: 0
+},
+{
+question: "Významným zdrojem tepla jsou",
+answers: [
+"játra",
+"uši",
+"oči"
+],
+correct: 0
+},
+{
+question: "Homeotermie znamená",
+answers: [
+"stálou tělesnou teplotu",
+"kolísání teploty podle okolí",
+"podchlazení"
+],
+correct: 0
+},
+{
+question: "Novorozenci mají hodně",
+answers: [
+"hnědé tukové tkáně",
+"bílé tukové tkáně",
+"kostní dřeně"
+],
+correct: 0
+},
+{
+question: "Ztráty tepla jsou větší",
+answers: [
+"na vzduchu",
+"ve vodě",
+"ve vakuu"
+],
+correct: 1
+},
+{
+question: "Behaviorální termoregulace znamená",
+answers: [
+"změnu chování kvůli teplotě",
+"tvorbu potu",
+"třes"
+],
+correct: 0
+},
+{
+question: "Termoneutrální zóna je asi",
+answers: [
+"25 °C",
+"0 °C",
+"45 °C"
+],
+correct: 0
+},
+{
+question: "Při přehřátí dochází k",
+answers: [
+"vazodilataci v kůži",
+"vazokonstrikci",
+"svalovému třesu"
+],
+correct: 0
+},
+{
+question: "Svalový třes",
+answers: [
+"zvyšuje tvorbu tepla",
+"snižuje metabolismus",
+"ochlazuje tělo"
+],
+correct: 0
+},
+{
+question: "Pocení",
+answers: [
+"brání přehřátí",
+"zvyšuje teplotu",
+"blokuje termoregulaci"
+],
+correct: 0
+},
+{
+question: "Při přehřátí",
+answers: [
+"dochází k vazodilataci",
+"dochází k vazokonstrikci",
+"klesá pocení"
+],
+correct: 0
+},
+{
+question: "Tvorba tepla závisí",
+answers: [
+"na teplotě okolí",
+"jen na vůli",
+"jen na jídle"
+],
+correct: 0
+},
+{
+question: "Při chladu vzniká",
+answers: [
+"svalový třes",
+"vazodilatace",
+"hyperglykémie"
+],
+correct: 0
+},
+{
+question: "Při chladu",
+answers: [
+"se snižuje pocení",
+"stoupá pocení",
+"nemění se SF"
+],
+correct: 0
+},
+{
+question: "Extrémní přehřátí vede",
+answers: [
+"k denaturaci bílkovin",
+"k hypoglykémii",
+"k alkalóze"
+],
+correct: 0
+},
+{
+question: "Odpařování potu je horší při",
+answers: [
+"vyšší vlhkosti",
+"nižší vlhkosti",
+"větru"
+],
+correct: 0
+},
+{
+question: "Ochlazování potem funguje",
+answers: [
+"odpařováním",
+"filtrací",
+"fermentací"
+],
+correct: 0
+},
+{
+question: "Hlavní mechanismus ochlazení je",
+answers: [
+"pocení",
+"třes",
+"tachykardie"
+],
+correct: 0
+},
+{
+question: "Potní žlázy jsou řízeny",
+answers: [
+"sympatikem",
+"parasympatikem",
+"somatickým NS"
+],
+correct: 0
+},
+{
+question: "Mokré oblečení",
+answers: [
+"zvyšuje riziko podchlazení",
+"snižuje ztráty tepla",
+"izoluje"
+],
+correct: 0
+},
+{
+question: "Vysoká vlhkost",
+answers: [
+"snižuje efektivitu pocení",
+"zvyšuje odpařování",
+"ochlazuje"
+],
+correct: 0
+},
+{
+question: "Únava při teple",
+answers: [
+"snižuje termoregulaci",
+"zvyšuje výkon",
+"zvyšuje třes"
+],
+correct: 0
+},
+{
+question: "Ztráty tepla jsou větší",
+answers: [
+"ve vodě",
+"na vzduchu",
+"ve vakuu"
+],
+correct: 0
+},
+{
+question: "Proudění vzduchu",
+answers: [
+"zvyšuje výměnu tepla",
+"snižuje výměnu tepla",
+"nemá vliv"
+],
+correct: 0
+},
+{
+question: "Horečka",
+answers: [
+"může být součást imunity",
+"je vždy škodlivá",
+"nemá vztah k infekci"
+],
+correct: 0
+},
+{
+question: "Úpal vzniká",
+answers: [
+"při selhání termoregulace",
+"jen při chladu",
+"jen při hypoxii"
+],
+correct: 0
+},
+{
+question: "Hypotermie je při teplotě pod",
+answers: [
+"35 °C",
+"37 °C",
+"40 °C"
+],
+correct: 0
+},
+{
+question: "Metabolismus znamená",
+answers: [
+"transformaci chemických látek",
+"jen trávení",
+"jen tvorbu ATP"
+],
+correct: 0
+},
+{
+question: "Syntetické děje označujeme jako",
+answers: [
+"anabolismus",
+"katabolismus",
+"oxidaci"
+],
+correct: 0
+},
+{
+question: "Katabolismus je",
+answers: [
+"rozklad složitějších látek",
+"syntéza bílkovin",
+"tvorba kostí"
+],
+correct: 0
+},
+{
+question: "Katabolické reakce jsou většinou",
+answers: [
+"endergonické",
+"exergonické",
+"bez energie"
+],
+correct: 1
+},
+{
+question: "Katabolismus",
+answers: [
+"uvolňuje energii",
+"spotřebovává energii",
+"netvoří ATP"
+],
+correct: 0
+},
+{
+question: "Anaerobní získávání energie je",
+answers: [
+"anaerobní glykolýza",
+"oxidativní fosforylace",
+"Krebsův cyklus"
+],
+correct: 0
+},
+{
+question: "Glykogeneze znamená",
+answers: [
+"tvorbu glykogenu",
+"rozklad glykogenu",
+"tvorbu glukózy"
+],
+correct: 0
+},
+{
+question: "Energie se ukládá",
+answers: [
+"do vazeb ATP",
+"do erytrocytů",
+"do Hb"
+],
+correct: 0
+},
+{
+question: "ATP je nutné hlavně",
+answers: [
+"pro pohyb",
+"pro tvorbu kostí",
+"pro vedení krve"
+],
+correct: 0
+},
+{
+question: "ATP vzniká hlavně při",
+answers: [
+"katabolismu",
+"anabolismu",
+"filtraci"
+],
+correct: 0
+},
+{
+question: "Anabolismus je",
+answers: [
+"soubor syntetických reakcí",
+"rozklad živin",
+"oxidace glukózy"
+],
+correct: 0
+},
+{
+question: "Při anabolismu",
+answers: [
+"se energie spotřebovává",
+"se energie uvolňuje",
+"nevzniká ATP"
+],
+correct: 0
+},
+{
+question: "Po jídle převažuje",
+answers: [
+"anabolismus",
+"katabolismus",
+"hypoxie"
+],
+correct: 0
+},
+{
+question: "Tvorba tkání je",
+answers: [
+"anabolický děj",
+"katabolický děj",
+"oxidace"
+],
+correct: 0
+},
+{
+question: "Nepřímá kalorimetrie",
+answers: [
+"počítá energetický výdej",
+"měří krevní tlak",
+"měří Hb"
+],
+correct: 0
+},
+{
+question: "Nepřímá kalorimetrie využívá",
+answers: [
+"spotřebu kyslíku",
+"měření glukózy",
+"měření teploty"
+],
+correct: 0
+},
+{
+question: "1 kcal odpovídá asi",
+answers: [
+"4,18 kJ",
+"10 kJ",
+"0,5 kJ"
+],
+correct: 0
+},
+{
+question: "Kalorie je",
+answers: [
+"energie ohřívající vodu",
+"množství Hb",
+"typ hormonu"
+],
+correct: 0
+},
+{
+question: "1 kcal",
+answers: [
+"= 100 kcal",
+"= 1 cal",
+"= 4,18 kJ"
+],
+correct: 2
+},
+{
+question: "1 kcal je přibližně",
+answers: [
+"4,16 kJ",
+"10 kJ",
+"0,1 kJ"
+],
+correct: 0
+},
+{
+question: "Nejvíce energie poskytují",
+answers: [
+"tuky",
+"bílkoviny",
+"minerály"
+],
+correct: 0
+},
+{
+question: "Největší zásoby energie jsou",
+answers: [
+"v tucích",
+"v bílkovinách",
+"v glykogenu"
+],
+correct: 0
+},
+{
+question: "Energetická hodnota živiny je",
+answers: [
+"energie uvolněná spálením 1 g",
+"množství Hb",
+"obsah vody"
+],
+correct: 0
+},
+{
+question: "Nejvyšší energetickou hodnotu mají",
+answers: [
+"tuky",
+"sacharidy",
+"bílkoviny"
+],
+correct: 0
+},
+{
+question: "1 g sacharidů má asi",
+answers: [
+"4,1 kcal",
+"9,3 kcal",
+"20 kcal"
+],
+correct: 0
+},
+{
+question: "1 g tuků má asi",
+answers: [
+"4,1 kcal",
+"9,3 kcal",
+"2 kcal"
+],
+correct: 1
+},
+{
+question: "Energetický ekvivalent znamená",
+answers: [
+"energii na litr O2",
+"množství Hb",
+"rychlost metabolismu"
+],
+correct: 0
+},
+{
+question: "Energetický ekvivalent je",
+answers: [
+"energie při spotřebě 1 l O2",
+"energie v 1 g tuku",
+"spotřeba ATP"
+],
+correct: 0
+},
+{
+question: "Energetický ekvivalent sacharidů je",
+answers: [
+"vyšší než tuků",
+"nižší než tuků",
+"stejný"
+],
+correct: 0
+},
+{
+question: "Energetický ekvivalent tuků je asi",
+answers: [
+"19 kJ/l O2",
+"5 kJ/l O2",
+"50 kJ/l O2"
+],
+correct: 0
+},
+{
+question: "V klidu převažuje využití",
+answers: [
+"tuků",
+"sacharidů",
+"bílkovin"
+],
+correct: 0
+},
+{
+question: "Při nízké intenzitě se využívají hlavně",
+answers: [
+"tuky",
+"ATP zásoby",
+"bílkoviny"
+],
+correct: 0
+},
+{
+question: "Bazální metabolismus",
+answers: [
+"udržuje homeostázu",
+"vzniká jen při sportu",
+"je nulový ve spánku"
+],
+correct: 0
+},
+{
+question: "Bazální metabolismus se značí",
+answers: [
+"BMR",
+"EKG",
+"VO2"
+],
+correct: 0
+},
+{
+question: "BMR je energie potřebná",
+answers: [
+"k udržení základních funkcí",
+"ke sprintu",
+"k tvorbě kostí"
+],
+correct: 0
+},
+{
+question: "BMR se měří",
+answers: [
+"v klidu nalačno",
+"po zátěži",
+"po jídle"
+],
+correct: 0
+},
+{
+question: "Bazální metabolismus se měří",
+answers: [
+"v bdělém stavu",
+"ve sprintu",
+"během spánku"
+],
+correct: 0
+},
+{
+question: "BMR s věkem",
+answers: [
+"klesá",
+"stoupá",
+"je stejný"
+],
+correct: 0
+},
+{
+question: "BMR je většinou",
+answers: [
+"vyšší u mužů",
+"vyšší u žen",
+"stejný"
+],
+correct: 0
+},
+{
+question: "S vyšší hmotností",
+answers: [
+"BMR stoupá",
+"BMR klesá",
+"BMR se nemění"
+],
+correct: 0
+},
+{
+question: "Nejvyšší BMR bývá",
+answers: [
+"v mladší dospělosti",
+"ve stáří",
+"v dětství po narození"
+],
+correct: 0
+},
+{
+question: "Vytrvalostně trénovaní mají BMR",
+answers: [
+"vyšší",
+"nižší",
+"stejný"
+],
+correct: 0
+},
+{
+question: "Při horečce metabolismus",
+answers: [
+"stoupá",
+"klesá",
+"se nemění"
+],
+correct: 0
+},
+{
+question: "Průměrný energetický výdej je asi",
+answers: [
+"2000 kcal/den",
+"200 kcal/den",
+"10000 kcal/den"
+],
+correct: 0
+},
+{
+question: "RMR je oproti BMR",
+answers: [
+"asi o 10 % vyšší",
+"nižší",
+"stejný"
+],
+correct: 0
+},
+{
+question: "Termický efekt potravy je asi",
+answers: [
+"10 %",
+"50 %",
+"1 %"
+],
+correct: 0
+},
+{
+question: "1 MET odpovídá asi",
+answers: [
+"3,5 ml O2/kg/min",
+"10 ml O2/kg/min",
+"1 ml O2/kg/min"
+],
+correct: 0
+},
+{
+question: "1 MET odpovídá asi",
+answers: [
+"1 kcal/kg/h",
+"10 kcal/kg/h",
+"0,1 kcal/kg/h"
+],
+correct: 0
+},
+{
+question: "MET vyjadřuje",
+answers: [
+"intenzitu zatížení",
+"TK",
+"glykémii"
+],
+correct: 0
+},
+{
+question: "Klidová spotřeba O2 je asi",
+answers: [
+"35 ml/kg/min",
+"3,5 ml/kg/min",
+"100 ml/kg/min"
+],
+correct: 1
+},
+{
+question: "MET je",
+answers: [
+"násobek klidového metabolismu",
+"jednotka Hb",
+"typ hormonu"
+],
+correct: 0
+},
+{
+question: "10 MET znamená",
+answers: [
+"10× klidový metabolismus",
+"10 kcal",
+"10 litrů O2"
+],
+correct: 0
+},
+{
+question: "Respirační kvocient je",
+answers: [
+"CO2 / O2",
+"O2 / CO2",
+"ATP / ADP"
+],
+correct: 0
+},
+{
+question: "Respirační kvocient vyjadřuje",
+answers: [
+"poměr vydechnutého CO2 a spotřebovaného O2",
+"rychlost SF",
+"glykémii"
+],
+correct: 0
+},
+{
+question: "RQ sacharidů je asi",
+answers: [
+"1,00",
+"0,70",
+"0,50"
+],
+correct: 0
+},
+{
+question: "RQ tuků je asi",
+answers: [
+"1,00",
+"0,70",
+"1,50"
+],
+correct: 1
+},
+{
+question: "Největší vliv na energetický výdej má",
+answers: [
+"pohybová aktivita",
+"spánek",
+"barva očí"
+],
+correct: 0
+},
+{
+question: "Nejvyšší termický efekt mají",
+answers: [
+"bílkoviny",
+"tuky",
+"minerály"
+],
+correct: 0
+},
+{
+question: "Termický efekt potravy je",
+answers: [
+"zvýšení metabolismu po jídle",
+"pokles teploty",
+"produkce Hb"
+],
+correct: 0
+},
+{
+question: "TEF činí asi",
+answers: [
+"10 % denního výdeje",
+"50 %",
+"1 %"
+],
+correct: 0
+},
+{
+question: "Při vyšší teplotě prostředí metabolismus",
+answers: [
+"stoupá",
+"klesá",
+"se nemění"
+],
+correct: 0
+},
+{
+question: "Vyšší teplota",
+answers: [
+"zrychluje metabolismus",
+"zastavuje metabolismus",
+"snižuje spotřebu O2"
+],
+correct: 0
+},
+{
+question: "Organismus mění",
+answers: [
+"chemickou energii na mechanickou",
+"mechanickou na krev",
+"krev na ATP"
+],
+correct: 0
+},
+{
+question: "Při velmi vysoké teplotě",
+answers: [
+"metabolismus stoupá",
+"metabolismus klesá",
+"nevzniká ATP"
+],
+correct: 0
+},
+{
+question: "Snížená produkce hormonů štítné žlázy",
+answers: [
+"snižuje metabolismus",
+"zvyšuje metabolismus",
+"nemá vliv"
+],
+correct: 0
+},
+{
+question: "Negativní energetická bilance znamená",
+answers: [
+"vyšší výdej než příjem",
+"vyšší příjem než výdej",
+"rovnováhu"
+],
+correct: 0
+},
+{
+question: "Extrémní negativní energetická bilance vede",
+answers: [
+"hladovění",
+"hypertrofii",
+"tachykardii"
+],
+correct: 0
+},
+{
+question: "Energetické krytí výkonu závisí",
+answers: [
+"na intenzitě a objemu zatížení",
+"na barvě očí",
+"na krevní skupině"
+],
+correct: 0
+},
+{
+question: "Hlavním zdrojem energie v klidu jsou",
+answers: [
+"mastné kyseliny",
+"ATP zásoby",
+"aminokyseliny"
+],
+correct: 0
+},
+{
+question: "Okamžitým zdrojem energie jsou",
+answers: [
+"ATP a kreatinfosfát",
+"tuky",
+"vitaminy"
+],
+correct: 0
+},
+{
+question: "ATP se resyntetizuje z",
+answers: [
+"jiných energetických zdrojů",
+"vody",
+"minerálů"
+],
+correct: 0
+},
+{
+question: "Přímým zdrojem energie pro kontrakci je",
+answers: [
+"ATP",
+"kreatin",
+"glykogen"
+],
+correct: 0
+},
+{
+question: "ATP poskytuje energii",
+answers: [
+"při svém štěpení",
+"při tvorbě Hb",
+"při filtraci"
+],
+correct: 0
+},
+{
+question: "Glukóza vstupuje do buňky pomocí",
+answers: [
+"přenašeče",
+"Na+ pumpy",
+"difuze bez přenašeče"
+],
+correct: 0
+},
+{
+question: "Zásoby ATP ve svalu vystačí asi",
+answers: [
+"1–2 sekundy",
+"1 minutu",
+"10 minut"
+],
+correct: 0
+},
+{
+question: "ATP se štěpí na",
+answers: [
+"ADP + Pi + energie",
+"AMP + voda",
+"glukózu"
+],
+correct: 0
+},
+{
+question: "Kreatinfosfát slouží",
+answers: [
+"k rychlé resyntéze ATP",
+"k tvorbě Hb",
+"k trávení"
+],
+correct: 0
+},
+{
+question: "Glukóza v krvi je",
+answers: [
+"okamžitý zdroj energie",
+"vitamin",
+"minerál"
+],
+correct: 0
+},
+{
+question: "Hydrolýza ATP znamená",
+answers: [
+"ATP → ADP + Pi",
+"ADP → ATP",
+"glukóza → pyruvát"
+],
+correct: 0
+},
+{
+question: "Oxidativní fosforylace probíhá",
+answers: [
+"v mitochondriích",
+"v jádru",
+"v cytoplazmě"
+],
+correct: 0
+},
+{
+question: "Na začátku intenzivní práce dominují",
+answers: [
+"makroergní fosfáty",
+"tuky",
+"aminokyseliny"
+],
+correct: 0
+},
+{
+question: "Kreatinfosfát",
+answers: [
+"poskytuje okamžitou energii",
+"slouží k tvorbě Hb",
+"štěpí tuky"
+],
+correct: 0
+},
+{
+question: "ATP-CP systém je",
+answers: [
+"anaerobní alaktátový",
+"aerobní",
+"laktátový"
+],
+correct: 0
+},
+{
+question: "ATP-CP systém dominuje",
+answers: [
+"v prvních 2 sekundách",
+"po 10 minutách",
+"ve spánku"
+],
+correct: 0
+},
+{
+question: "Kreatinfosfát je",
+answers: [
+"zásobní makroergní fosfát",
+"enzym",
+"vitamin"
+],
+correct: 0
+},
+{
+question: "Aerobní metabolismus probíhá",
+answers: [
+"za přístupu kyslíku",
+"bez kyslíku",
+"jen ve svalech"
+],
+correct: 0
+},
+{
+question: "ATP-CP systém dominuje",
+answers: [
+"u krátkodobého výkonu",
+"u maratonu",
+"ve spánku"
+],
+correct: 0
+},
+{
+question: "Glykogen je",
+answers: [
+"živočišná zásobní látka",
+"enzym",
+"vitamin"
+],
+correct: 0
+},
+{
+question: "Glykogen je uložen hlavně",
+answers: [
+"v játrech a svalech",
+"v kostech",
+"v krvi"
+],
+correct: 0
+},
+{
+question: "Mozek využívá hlavně",
+answers: [
+"glukózu",
+"mastné kyseliny",
+"žluč"
+],
+correct: 0
+},
+{
+question: "Glukóza může být využita",
+answers: [
+"aerobně i anaerobně",
+"jen anaerobně",
+"jen aerobně"
+],
+correct: 0
+},
+{
+question: "Glykolýza končí vznikem",
+answers: [
+"pyruvátu",
+"laktátu vždy",
+"acetylcholinu"
+],
+correct: 0
+},
+{
+question: "Na začátku intenzivního výkonu převládá",
+answers: [
+"anaerobní glykolýza",
+"oxidace tuků",
+"proteosyntéza"
+],
+correct: 0
+},
+{
+question: "Glykolýza probíhá",
+answers: [
+"v cytoplazmě",
+"v jádru",
+"v mitochondrii"
+],
+correct: 0
+},
+{
+question: "Anaerobní glykolýza je",
+answers: [
+"laktátová",
+"alaktátová",
+"oxidativní"
+],
+correct: 0
+},
+{
+question: "Aerobní metabolismus převažuje",
+answers: [
+"po delší době zátěže",
+"v prvních 2 s",
+"jen ve sprintu"
+],
+correct: 0
+},
+{
+question: "Anaerobní glykolýza vytvoří asi",
+answers: [
+"2–3 ATP",
+"38 ATP",
+"100 ATP"
+],
+correct: 0
+},
+{
+question: "Glykolýza je",
+answers: [
+"přeměna glukózy na pyruvát",
+"tvorba Hb",
+"štěpení tuků"
+],
+correct: 0
+},
+{
+question: "Při anaerobní glykolýze vzniká",
+answers: [
+"laktát",
+"močovina",
+"bilirubin"
+],
+correct: 0
+},
+{
+question: "Laktát vzniká",
+answers: [
+"z pyruvátu při nedostatku O2",
+"v játrech z tuků",
+"ve slezině"
+],
+correct: 0
+},
+{
+question: "Laktát je",
+answers: [
+"produkt anaerobního metabolismu",
+"hormon",
+"enzym"
+],
+correct: 0
+},
+{
+question: "Při acidóze pH",
+answers: [
+"klesá",
+"stoupá",
+"je stejné"
+],
+correct: 0
+},
+{
+question: "Acidóza souvisí s",
+answers: [
+"nárůstem H+",
+"poklesem CO2",
+"nedostatkem Hb"
+],
+correct: 0
+},
+{
+question: "Nárůst H+ vede k",
+answers: [
+"alkalóze",
+"acidóze",
+"hypoxii"
+],
+correct: 1
+},
+{
+question: "Při dlouhé zátěži využití sacharidů",
+answers: [
+"stoupá",
+"klesá",
+"je nulové"
+],
+correct: 1
+},
+{
+question: "Aerobní metabolismus probíhá",
+answers: [
+"v mitochondriích",
+"v jádru",
+"v membráně"
+],
+correct: 0
+},
+{
+question: "Aerobně lze využít",
+answers: [
+"sacharidy, tuky i aminokyseliny",
+"jen sacharidy",
+"jen tuky"
+],
+correct: 0
+},
+{
+question: "Aerobní metabolismus vyžaduje",
+answers: [
+"kyslík",
+"laktát",
+"bilirubin"
+],
+correct: 0
+},
+{
+question: "Aerobní oxidace glukózy vytvoří asi",
+answers: [
+"2 ATP",
+"38–39 ATP",
+"5 ATP"
+],
+correct: 1
+},
+{
+question: "V Krebsově cyklu vzniká",
+answers: [
+"CO2 a H+",
+"močovina",
+"bilirubin"
+],
+correct: 0
+},
+{
+question: "Oxidativní fosforylace",
+answers: [
+"tvoří ATP a H2O",
+"štěpí Hb",
+"tvoří laktát"
+],
+correct: 0
+},
+{
+question: "Elektronový transportní řetězec je",
+answers: [
+"v mitochondrii",
+"v jádru",
+"v cytoplazmě"
+],
+correct: 0
+},
+{
+question: "V mitochondrii probíhá",
+answers: [
+"dekarboxylace a dehydrogenace",
+"filtrace",
+"hemolýza"
+],
+correct: 0
+},
+{
+question: "Krebsův cyklus probíhá",
+answers: [
+"v mitochondrii",
+"v membráně",
+"v ribozomech"
+],
+correct: 0
+},
+{
+question: "Chemická energie vzniká",
+answers: [
+"oxidací živin",
+"jen z vody",
+"jen z Hb"
+],
+correct: 0
+},
+{
+question: "ATP-CP systém je",
+answers: [
+"aerobní alaktátový",
+"anaerobní laktátový",
+"jen oxidativní"
+],
+correct: 0
+},
+{
+question: "Přímým zdrojem energie je",
+answers: [
+"ATP",
+"glukóza",
+"tuk"
+],
+correct: 0
+},
+{
+question: "Na konci dýchacího řetězce vzniká",
+answers: [
+"voda",
+"močovina",
+"laktát"
+],
+correct: 0
+},
+{
+question: "Kyslík v dýchacím řetězci",
+answers: [
+"přijímá vodík",
+"uvolňuje ATP",
+"štěpí glukózu"
+],
+correct: 0
+},
+{
+question: "Produkty aerobního metabolismu jsou",
+answers: [
+"voda a CO2",
+"laktát a NH3",
+"bilirubin a močovina"
+],
+correct: 0
+},
+{
+question: "ATP vzniká",
+answers: [
+"biochemickými reakcemi",
+"jen filtrací",
+"jen v krvi"
+],
+correct: 0
+},
+{
+question: "ATP vzniká hlavně",
+answers: [
+"ve svalových vláknech",
+"v erytrocytech",
+"v moči"
+],
+correct: 0
+},
+{
+question: "Mastné kyseliny se oxidují",
+answers: [
+"výhradně aerobně",
+"jen anaerobně",
+"bez O2"
+],
+correct: 0
+},
+{
+question: "Transport MK do mitochondrie vyžaduje",
+answers: [
+"karnitin",
+"bilirubin",
+"myoglobin"
+],
+correct: 0
+},
+{
+question: "Karnitin slouží",
+answers: [
+"k transportu MK",
+"k tvorbě Hb",
+"k filtraci"
+],
+correct: 0
+},
+{
+question: "Energetický výnos tuků je",
+answers: [
+"větší než sacharidů",
+"nižší než sacharidů",
+"stejný"
+],
+correct: 0
+},
+{
+question: "Bílkoviny se štěpí na",
+answers: [
+"aminokyseliny",
+"mastné kyseliny",
+"monosacharidy"
+],
+correct: 0
+},
+{
+question: "Bílkoviny nejsou ideální zdroj energie protože",
+answers: [
+"obsahují dusík",
+"obsahují vodu",
+"nemají uhlík"
+],
+correct: 0
+},
+{
+question: "Tuky jsou",
+answers: [
+"téměř nevyčerpatelný zdroj energie",
+"malý zdroj energie",
+"bez energetického významu"
+],
+correct: 0
+},
+{
+question: "Metabolismus tuků probíhá hlavně",
+answers: [
+"aerobně",
+"anaerobně",
+"bez ATP"
+],
+correct: 0
+},
+{
+question: "Beta-oxidace probíhá",
+answers: [
+"v mitochondriích",
+"v jádru",
+"v erytrocytech"
+],
+correct: 0
+},
+{
+question: "Nejrychlejší zdroj energie je",
+answers: [
+"ATP",
+"tuky",
+"bílkoviny"
+],
+correct: 0
+},
+{
+question: "Kreatinfosfát slouží",
+answers: [
+"k obnově ATP",
+"k tvorbě glukózy",
+"k syntéze Hb"
+],
+correct: 0
+},
+{
+question: "Nejvyšší výkon poskytuje",
+answers: [
+"anaerobní metabolismus",
+"oxidace tuků",
+"bazální metabolismus"
+],
+correct: 0
+},
+{
+question: "Nejúspornější zdroj energie jsou",
+answers: [
+"tuky",
+"sacharidy",
+"ATP"
+],
+correct: 0
+},
+{
+question: "Při maratonu převažuje",
+answers: [
+"aerobní metabolismus",
+"ATP-CP systém",
+"anaerobní glykolýza"
+],
+correct: 0
+},
+{
+question: "Sprint využívá hlavně",
+answers: [
+"ATP-CP systém",
+"oxidaci tuků",
+"proteosyntézu"
+],
+correct: 0
+},
+{
+question: "Laktát může být využit",
+answers: [
+"jako zdroj energie",
+"jen jako odpad",
+"jen v moči"
+],
+correct: 0
+},
+{
+question: "Coriho cyklus probíhá mezi",
+answers: [
+"svalem a játry",
+"srdcem a plícemi",
+"ledvinou a mozkem"
+],
+correct: 0
+},
+{
+question: "Glykogenolýza znamená",
+answers: [
+"rozklad glykogenu",
+"tvorbu glykogenu",
+"tvorbu glukózy z AK"
+],
+correct: 0
+},
+{
+question: "Glukoneogeneze znamená",
+answers: [
+"tvorbu glukózy",
+"rozklad glukózy",
+"oxidaci tuků"
+],
+correct: 0
+},
+{
+question: "Největší zásoby glykogenu jsou",
+answers: [
+"ve svalech a játrech",
+"v krvi",
+"v kostech"
+],
+correct: 0
+},
+{
+question: "Mozek preferuje",
+answers: [
+"glukózu",
+"mastné kyseliny",
+"močovinu"
+],
+correct: 0
+},
+{
+question: "Při hladovění vznikají",
+answers: [
+"ketolátky",
+"bilirubin",
+"erytrocyty"
+],
+correct: 0
+},
+{
+question: "Ketolátky vznikají hlavně",
+answers: [
+"v játrech",
+"ve slezině",
+"v plicích"
+],
+correct: 0
+},
+{
+question: "Při hypoxii se zvyšuje",
+answers: [
+"anaerobní metabolismus",
+"oxidace tuků",
+"filtrace"
+],
+correct: 0
+},
+{
+question: "VO2max znamená",
+answers: [
+"maximální spotřebu kyslíku",
+"maximální SF",
+"maximální TK"
+],
+correct: 0
+},
+{
+question: "Vytrvalostní trénink zvyšuje",
+answers: [
+"VO2max",
+"hematokrit na 90 %",
+"glykémii"
+],
+correct: 0
+},
+{
+question: "Při tréninku roste počet",
+answers: [
+"mitochondrií",
+"erytrocytů v moči",
+"osteoklastů"
+],
+correct: 0
+},
+{
+question: "Oxidativní kapacita svalů závisí na",
+answers: [
+"množství mitochondrií",
+"počtu kostí",
+"barvě očí"
+],
+correct: 0
+},
+{
+question: "Nejvyšší oxidativní kapacitu mají",
+answers: [
+"červená svalová vlákna",
+"bílá vlákna",
+"osteocyty"
+],
+correct: 0
+},
+{
+question: "Bílá svalová vlákna",
+answers: [
+"mají vysokou glykolytickou kapacitu",
+"jsou nejpomalejší",
+"nemají ATP"
+],
+correct: 0
+},
+{
+question: "Červená svalová vlákna",
+answers: [
+"mají hodně mitochondrií",
+"nemají myoglobin",
+"jsou anaerobní"
+],
+correct: 0
+},
+{
+question: "Myoglobin",
+answers: [
+"váže kyslík ve svalu",
+"štěpí ATP",
+"vede vzruch"
+],
+correct: 0
+},
+{
+question: "Největší zásoby energie v těle jsou uloženy",
+answers: [
+"v tukové tkáni",
+"v ATP",
+"v krvi"
+],
+correct: 0
+},
+{
+question: "ATP obsahuje energii ve vazbě",
+answers: [
+"fosfátové",
+"peptidové",
+"vodíkové"
+],
+correct: 0
+},
+{
+question: "ATP se využívá při",
+answers: [
+"svalové kontrakci",
+"tvorbě kostí",
+"jen trávení"
+],
+correct: 0
+},
+{
+question: "Kreatinfosfát obsahuje",
+answers: [
+"makroergní vazbu",
+"hemoglobin",
+"inzulin"
+],
+correct: 0
+},
+{
+question: "ATP-CP systém",
+answers: [
+"neprodukuje laktát",
+"produkuje velké množství laktátu",
+"je čistě aerobní"
+],
+correct: 0
+},
+{
+question: "Anaerobní glykolýza probíhá bez",
+answers: [
+"kyslíku",
+"glukózy",
+"ATP"
+],
+correct: 0
+},
+{
+question: "Při anaerobní glykolýze vzniká",
+answers: [
+"laktát",
+"bilirubin",
+"močovina"
+],
+correct: 0
+},
+{
+question: "Aerobní metabolismus je efektivnější protože",
+answers: [
+"vytváří více ATP",
+"nevyužívá kyslík",
+"netvoří CO2"
+],
+correct: 0
+},
+{
+question: "Nejvíce ATP vzniká při",
+answers: [
+"oxidativní fosforylaci",
+"glykolýze",
+"štěpení ATP"
+],
+correct: 0
+},
+{
+question: "Krebsův cyklus probíhá",
+answers: [
+"v matrix mitochondrie",
+"v jádru",
+"v ribozomech"
+],
+correct: 0
+},
+{
+question: "Oxidativní fosforylace využívá",
+answers: [
+"elektronový transportní řetězec",
+"filtraci",
+"fermentaci"
+],
+correct: 0
+},
+{
+question: "Konečným akceptorem elektronů je",
+answers: [
+"kyslík",
+"CO2",
+"vodík"
+],
+correct: 0
+},
+{
+question: "Bez kyslíku nemůže probíhat",
+answers: [
+"aerobní metabolismus",
+"glykolýza",
+"štěpení ATP"
+],
+correct: 0
+},
+{
+question: "Laktát",
+answers: [
+"může být využit jako energie",
+"je jen toxický odpad",
+"blokuje ATP"
+],
+correct: 0
+},
+{
+question: "Při intenzivním výkonu se zvyšuje",
+answers: [
+"produkce laktátu",
+"produkce žluči",
+"filtrace v ledvinách"
+],
+correct: 0
+},
+{
+question: "Aerobní metabolismus převažuje",
+answers: [
+"při dlouhodobé zátěži",
+"v prvních sekundách sprintu",
+"jen ve spánku"
+],
+correct: 0
+},
+{
+question: "Anaerobní metabolismus převažuje",
+answers: [
+"při krátké intenzivní zátěži",
+"v maratonu",
+"v klidu"
+],
+correct: 0
+},
+{
+question: "Při dlouhé zátěži se více využívají",
+answers: [
+"tuky",
+"ATP zásoby",
+"kreatinfosfát"
+],
+correct: 0
+},
+{
+question: "Glukóza je skladována jako",
+answers: [
+"glykogen",
+"myoglobin",
+"bilirubin"
+],
+correct: 0
+},
+{
+question: "Játra udržují glykémii pomocí",
+answers: [
+"glykogenolýzy",
+"filtrace",
+"hemolýzy"
+],
+correct: 0
+},
+{
+question: "Při hladovění roste",
+answers: [
+"lipolýza",
+"syntéza tuků",
+"glykogeneze"
+],
+correct: 0
+},
+{
+question: "Lipolýza znamená",
+answers: [
+"rozklad tuků",
+"tvorbu tuků",
+"štěpení bílkovin"
+],
+correct: 0
+},
+{
+question: "Beta oxidace štěpí",
+answers: [
+"mastné kyseliny",
+"aminokyseliny",
+"glukózu"
+],
+correct: 0
+},
+{
+question: "Aminokyseliny mohou být využity",
+answers: [
+"jako zdroj energie",
+"jen pro proteosyntézu",
+"jen v mozku"
+],
+correct: 0
+},
+{
+question: "Dusík z aminokyselin se mění na",
+answers: [
+"močovinu",
+"bilirubin",
+"laktát"
+],
+correct: 0
+},
+{
+question: "Močovina vzniká hlavně",
+answers: [
+"v játrech",
+"v ledvinách",
+"ve slezině"
+],
+correct: 0
+},
+{
+question: "Při vysoké intenzitě výkonu je hlavním zdrojem",
+answers: [
+"sacharidový metabolismus",
+"oxidace tuků",
+"bílkoviny"
+],
+correct: 0
+},
+{
+question: "Tuky jsou výhodné protože",
+answers: [
+"mají vysokou energetickou hustotu",
+"nepotřebují O2",
+"jsou rychlejší než ATP"
+],
+correct: 0
+},
+{
+question: "Respirační kvocient tuků je",
+answers: [
+"0,70",
+"1,00",
+"1,50"
+],
+correct: 0
+},
+{
+question: "Respirační kvocient sacharidů je",
+answers: [
+"1,00",
+"0,70",
+"0,20"
+],
+correct: 0
+},
+{
+question: "Při spalování tuků se spotřebuje",
+answers: [
+"více kyslíku",
+"méně kyslíku",
+"žádný kyslík"
+],
+correct: 0
+},
+{
+question: "Vytrvalostní trénink zvyšuje",
+answers: [
+"oxidativní kapacitu",
+"produkci laktátu v klidu",
+"rychlost hemolýzy"
+],
+correct: 0
+},
+{
+question: "Silový trénink vede hlavně k",
+answers: [
+"hypertrofii",
+"atrofii",
+"hypoxii"
+],
+correct: 0
+},
+{
+question: "Svalová hypertrofie znamená",
+answers: [
+"zvětšení svalových vláken",
+"zánik svalů",
+"pokles ATP"
+],
+correct: 0
+},
+{
+question: "Atrofie znamená",
+answers: [
+"úbytek svalové hmoty",
+"zvětšení svalů",
+"růst kostí"
+],
+correct: 0
+},
+{
+question: "Sarkopenie souvisí",
+answers: [
+"se stárnutím",
+"s hypoglykémií",
+"s horečkou"
+],
+correct: 0
+},
+{
+question: "Červená vlákna jsou",
+answers: [
+"oxidativní",
+"glykolytická",
+"bez mitochondrií"
+],
+correct: 0
+},
+{
+question: "Bílá vlákna jsou",
+answers: [
+"glykolytická",
+"vysoce oxidativní",
+"bez ATP"
+],
+correct: 0
+},
+{
+question: "Motorická jednotka je",
+answers: [
+"motoneuron a jím inervovaná vlákna",
+"jen svalové vlákno",
+"jen neuron"
+],
+correct: 0
+},
+{
+question: "Postupný nábor motorických jednotek",
+answers: [
+"zvyšuje sílu kontrakce",
+"snižuje výkon",
+"blokuje ATP"
+],
+correct: 0
+},
+{
+question: "Tetanická kontrakce vzniká",
+answers: [
+"časovou sumací AP",
+"filtrací",
+"hemolýzou"
+],
+correct: 0
+},
+{
+question: "Isometrická kontrakce",
+answers: [
+"nemění délku svalu",
+"nemění napětí",
+"nevyžaduje ATP"
+],
+correct: 0
+},
+{
+question: "Isotonická kontrakce",
+answers: [
+"mění délku svalu",
+"nemění délku",
+"blokuje Ca"
+],
+correct: 0
+},
+{
+question: "Svalová kontrakce vyžaduje",
+answers: [
+"ATP a Ca",
+"jen vodu",
+"jen Na"
+],
+correct: 0
+},
+{
+question: "Ca při kontrakci",
+answers: [
+"uvolňuje vazebná místa na aktinu",
+"blokuje myosin",
+"štěpí ATP"
+],
+correct: 0
+},
+{
+question: "Troponin a tropomyosin",
+answers: [
+"regulují kontrakci",
+"tvoří ATP",
+"štěpí tuky"
+],
+correct: 0
+},
+{
+question: "Myosin je",
+answers: [
+"motorický protein",
+"enzym trávení",
+"vitamin"
+],
+correct: 0
+},
+{
+question: "Aktin je",
+answers: [
+"kontraktilní protein",
+"minerál",
+"hormon"
+],
+correct: 0
+},
+{
+question: "Myoglobin",
+answers: [
+"váže O2 ve svalu",
+"váže CO2 v krvi",
+"štěpí glukózu"
+],
+correct: 0
+},
+{
+question: "Svalová relaxace vyžaduje",
+answers: [
+"ATP",
+"jen vodu",
+"nevyžaduje energii"
+],
+correct: 0
+},
+{
+question: "Nejvíce mitochondrií mají",
+answers: [
+"červená svalová vlákna",
+"bílá vlákna",
+"erytrocyty"
+],
+correct: 0
+}
+];
+
+let currentQuiz = [];
+let currentQuestion = 0;
+let correctAnswers = 0;
+
+let wrongAnswers =
+  JSON.parse(localStorage.getItem('wrongAnswers')) || [];
+
+let wrongAnswers40 =
+  JSON.parse(localStorage.getItem('wrongAnswers40')) || [];
+
+function shuffleArray(array) {
+
+  for (let i = array.length - 1; i > 0; i--) {
+
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+
+  return array;
+}
+
+function startQuiz(type) {
+
+  document.getElementById('quiz')
+    .classList.remove('hidden');
+
+  document.getElementById('result').innerText = '';
+
+  if (type === 'all') {
+
+    currentQuiz =
+      shuffleArray([...questions]);
+  }
+
+  if (type === 'wrong') {
+
+    currentQuiz =
+      shuffleArray(
+        questions.filter(q =>
+          wrongAnswers.includes(q.question)
+        )
+      );
+
+    if (currentQuiz.length === 0) {
+
+      alert('Nemáš žádné špatné otázky.');
+
+      return;
+    }
+  }
+
+  if (type === '40') {
+
+    currentQuiz =
+      shuffleArray([...questions]).slice(0, 40);
+  }
+
+  if (type === '40wrong') {
+
+    currentQuiz =
+      shuffleArray(
+        questions.filter(q =>
+          wrongAnswers40.includes(q.question)
+        )
+      );
+
+    if (currentQuiz.length === 0) {
+
+      alert(
+        'Nemáš žádné špatné otázky z testu 40 otázek.'
+      );
+
+      return;
+    }
+  }
+
+  currentQuestion = 0;
+  correctAnswers = 0;
+
+  showQuestion(type);
+}
+
+function showQuestion(mode) {
+
+  const q = currentQuiz[currentQuestion];
+
+  document.getElementById('progress').innerText =
+    `Otázka ${currentQuestion + 1} / ${currentQuiz.length}`;
+
+  document.getElementById('question').innerText =
+    q.question;
+
+  const answersDiv =
+    document.getElementById('answers');
+
+  answersDiv.innerHTML = '';
+
+  q.answers.forEach((answer, index) => {
+
+    const btn =
+      document.createElement('button');
+
+    btn.classList.add('answer-btn');
+
+    btn.innerText =
+      `${String.fromCharCode(65 + index)}: ${answer}`;
+
+    btn.onclick = () =>
+      checkAnswer(
+        index,
+        q.correct,
+        btn,
+        mode,
+        q.question
+      );
+
+    answersDiv.appendChild(btn);
+  });
+}
+
+function checkAnswer(
+  selected,
+  correct,
+  button,
+  mode,
+  questionText
+) {
+
+  const buttons =
+    document.querySelectorAll('.answer-btn');
+
+  buttons.forEach(btn => btn.disabled = true);
+
+  if (selected === correct) {
+
+    correctAnswers++;
+
+    button.classList.add('correct');
+
+  } else {
+
+    button.classList.add('wrong');
+
+    buttons[correct].classList.add('correct');
+
+    if (!wrongAnswers.includes(questionText)) {
+
+      wrongAnswers.push(questionText);
+    }
+
+    if (
+      mode === '40' &&
+      !wrongAnswers40.includes(questionText)
+    ) {
+
+      wrongAnswers40.push(questionText);
+    }
+  }
+
+  localStorage.setItem(
+    'wrongAnswers',
+    JSON.stringify(wrongAnswers)
+  );
+
+  localStorage.setItem(
+    'wrongAnswers40',
+    JSON.stringify(wrongAnswers40)
+  );
+
+  const nextBtn =
+    document.createElement('button');
+
+  nextBtn.innerText = 'Další otázka';
+
+  nextBtn.classList.add('start-btn');
+
+  nextBtn.style.marginTop = '20px';
+
+  nextBtn.onclick = () => {
+
+    currentQuestion++;
+
+    if (currentQuestion < currentQuiz.length) {
+
+      showQuestion(mode);
+
+    } else {
+
+      finishQuiz();
+    }
+  };
+
+  document.getElementById('answers')
+    .appendChild(nextBtn);
+}
+
+function finishQuiz() {
+
+  const total = currentQuiz.length;
+
+  const percent =
+    Math.round(
+      (correctAnswers / total) * 100
+    );
+
+  document.getElementById('question').innerText =
+    'Test dokončen!';
+
+  document.getElementById('answers').innerHTML = '';
+
+  document.getElementById('progress').innerText = '';
+
+  document.getElementById('result').innerHTML = `
+    Správně: ${correctAnswers} / ${total}<br>
+    Úspěšnost: ${percent} %
+  `;
+}
+
+function finishQuizEarly() {
+
+  finishQuiz();
+}
+    
+
+  </script>
+</body>
+</html>
